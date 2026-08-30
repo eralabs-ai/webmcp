@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "ora",
+  "description": "Ora plugins for making products agent-ready, starting with WebMCP.",
+  "owner": { "name": "Ora", "url": "https://github.com/eralabs-ai" },
+  "metadata": {
+    "homepage": "https://github.com/eralabs-ai/webmcp",
+    "repository": "https://github.com/eralabs-ai/webmcp"
+  },
+  "plugins": [
+    {
+      "name": "webmcp",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Make a website agent-ready with WebMCP: audit agent-readiness, propose page tools, implement them on document.modelContext, and verify them in a real browser.",
+      "author": { "name": "Ora", "url": "https://github.com/eralabs-ai" },
+      "homepage": "https://github.com/eralabs-ai/webmcp",
+      "repository": "https://github.com/eralabs-ai/webmcp",
+      "keywords": ["webmcp", "model-context", "browser-agents", "agent-ready", "ora"],
+      "category": "development",
+      "license": "MIT"
+    }
+  ]
+}
