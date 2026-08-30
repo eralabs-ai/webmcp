@@ -24,9 +24,9 @@ jobs:
       - name: Note when skipping
         if: env.ANTHROPIC_API_KEY == ''
         run: echo "::notice::ANTHROPIC_API_KEY secret not set; skipping plugin evals"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: env.ANTHROPIC_API_KEY != ''
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: env.ANTHROPIC_API_KEY != ''
         with:
           node-version: 22
@@ -45,7 +45,7 @@ jobs:
             --json eval-result.json
       - name: Upload results
         if: env.ANTHROPIC_API_KEY != '' && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: eval-results
           path: |
