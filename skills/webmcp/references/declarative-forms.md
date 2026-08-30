@@ -64,7 +64,7 @@ form:tool-form-active { outline: 2px solid highlight; }
 :tool-submit-active   { outline: 2px solid highlight; }
 ```
 
-Listen for `toolactivated` / `toolcancel` when the app should react (for
+Listen for `toolactivated` / `toolcanceled` when the app should react (for
 example, expanding a collapsed form the agent just filled).
 
 ## Done when

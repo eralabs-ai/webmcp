@@ -3,6 +3,21 @@
 Three ways to expose a journey. Mixing is fine; overlapping is not. Never
 register two tools for the same job across strategies.
 
+## Imperative: craft dedicated journey tools
+
+`registerTool` packages a real journey, not a 1:1 map of today's UI. A
+4-step checkout becomes **one** tool registered on step 1 that persists the
+selections and lands the user on the review/pay step; four chained form
+tools would be the anti-pattern.
+
+**Fit:** the agent should complete a job that humans do across several
+screens, or `execute` needs the app's stores, APIs, and router. This is the
+default strategy: every runtime that speaks WebMCP reads registered tools.
+
+Requires the planning pass in [tool-design.md](tool-design.md): scenario,
+input, UI outcome, state outcome, availability, boundary for irreversible
+steps.
+
 ## Declarative: annotate existing forms
 
 Add `toolname` / `tooldescription` (plus `toolparamdescription` on vague
@@ -15,28 +30,16 @@ booking steps that are real `<form>`s) and visible fill-in is the desired
 UX. Fastest strategy, zero JS, works on MPAs with no bundler.
 
 **Reach:** Chrome origin trial only today; the spec's declarative section is
-a TODO, and agent runtimes that read only imperatively registered tools do
-not see form attributes. If the user targets such a runtime, or the target
-runtime is unknown, ship the journey imperatively instead.
+a TODO, and agent runtimes that read only imperatively registered tools —
+ChatGPT Site tools among them — never see form attributes. If the user
+targets such a runtime (any ChatGPT/OpenAI-facing deployment, or an OpenAI
+Challenge entry), or the target runtime is unknown, ship the journey
+imperatively instead.
 
 **Not a fit:** click-handler "forms" with no `<form>` element, or multi-step
 tunnels that should collapse into one agent call.
 
 Implementation: [declarative-forms.md](declarative-forms.md).
-
-## Imperative: craft dedicated journey tools
-
-`registerTool` packages a real journey, not a 1:1 map of today's UI. A
-4-step checkout becomes **one** tool registered on step 1 that persists the
-selections and lands the user on the review/pay step; four chained form
-tools would be the anti-pattern.
-
-**Fit:** the agent should complete a job that humans do across several
-screens, or `execute` needs the app's stores, APIs, and router.
-
-Requires the planning pass in [tool-design.md](tool-design.md): scenario,
-input, UI outcome, state outcome, availability, boundary for irreversible
-steps.
 
 ## Bridge: reuse an existing remote MCP server
 
