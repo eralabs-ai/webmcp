@@ -5,9 +5,9 @@
   "description": "Repo tooling for the webmcp plugin: commit hooks and delegated checks. The publishable package lives in packages/webmcp-bridge.",
   "scripts": {
     "check": "node scripts/check.mjs",
-    "lint": "npm --prefix packages/webmcp-bridge run lint",
-  "typecheck": "npm --prefix packages/webmcp-bridge run typecheck",
-    "test": "npm --prefix packages/webmcp-bridge test",
+    "lint": "npm --prefix packages/webmcp-bridge run lint && npm --prefix packages/webmcp-verify run lint",
+    "typecheck": "npm --prefix packages/webmcp-bridge run typecheck && npm --prefix packages/webmcp-verify run typecheck",
+    "test": "npm --prefix packages/webmcp-bridge test && npm --prefix packages/webmcp-verify test",
     "prepare": "husky"
   },
   "devDependencies": {

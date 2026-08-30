@@ -1,0 +1,60 @@
+{
+  "name": "@ora-ai/webmcp-verify",
+  "version": "0.1.0",
+  "description": "Drive Chrome with WebMCP enabled and verify page tools: list registrations, execute tools the way an agent would, and lint the results.",
+  "keywords": [
+    "webmcp",
+    "verify",
+    "model-context",
+    "browser-agents",
+    "agent-ready",
+    "ora"
+  ],
+  "homepage": "https://github.com/eralabs-ai/webmcp/tree/main/packages/webmcp-verify",
+  "bugs": {
+    "url": "https://github.com/eralabs-ai/webmcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eralabs-ai/webmcp.git",
+    "directory": "packages/webmcp-verify"
+  },
+  "license": "MIT",
+  "author": "Ora (https://github.com/eralabs-ai)",
+  "type": "module",
+  "bin": {
+    "webmcp-verify": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "lint": "eslint --cache --cache-location .eslintcache .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "chrome-launcher": "^1.2.0",
+    "chrome-remote-interface": "^0.34.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/chrome-remote-interface": "^0.34.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}
