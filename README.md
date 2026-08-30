@@ -84,6 +84,9 @@ imperative `registerTool`, or a bridge to an MCP server you already run.
 
 - `node scripts/check.mjs` runs the repo checks CI runs: manifest
   validity, version sync, skill frontmatter, link integrity.
+- `npm install` at the repo root sets up the git hooks (husky):
+  conventional-commit messages via commitlint, and check + lint + tests
+  on push. `npm run lint` lints the bridge package (eslint).
 - `tests/fixtures/bookshop/` is a small static site for exercising the
   skills by hand; its README lists the expected outcome per skill.
 - `evals/` holds cases for `claude plugin eval` (early access).
