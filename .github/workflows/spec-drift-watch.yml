@@ -72,7 +72,7 @@ jobs:
           cat > "$body_file" <<BODY
           ## Motivation
 
-          The W3C WebMCP draft (\`$SPEC_REPO\`) has $DRIFT_COUNT commit(s) since the pinned snapshot **$SNAPSHOT_DATE**. The skills teach that snapshot, so unreviewed spec movement can silently make generated code wrong - the exact flaw this plugin exploits in stale competitors.
+          The W3C WebMCP draft (\`$SPEC_REPO\`) has $DRIFT_COUNT commit(s) since the pinned snapshot **$SNAPSHOT_DATE**. The skills teach that snapshot, so unreviewed spec movement can silently make generated code wrong.
 
           ## Objective
 

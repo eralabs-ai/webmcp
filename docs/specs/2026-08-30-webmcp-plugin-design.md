@@ -16,9 +16,9 @@ Brand: **ora** (plugin name `webmcp`, marketplace name `ora`, author Ora,
 
 ## Decisions (locked with the user)
 
-- **Scope: best-of-both hybrid.** Multiple focused skills with a hard
-  plan-approval gate (nekuda-style rigor) but zero runtime baggage: no
-  interactive UI server, no CLI, no login, no vendor SDK (alpic-style purity).
+- **Scope: focused hybrid.** Multiple focused skills with a hard
+  plan-approval gate, and zero runtime baggage: no interactive UI server,
+  no CLI, no login, no vendor SDK.
 - **Runtime target: the standard API only.** `document.modelContext` first
   (the only surface in the current spec), `navigator.modelContext` as a
   legacy-implementation fallback in feature detection only,
@@ -28,11 +28,10 @@ Brand: **ora** (plugin name `webmcp`, marketplace name `ora`, author Ora,
   Chrome's origin-trial declarative form API.
 - **Platforms: all three.** `.claude-plugin/` (Claude Code),
   `.codex-plugin/` (Codex), `.agents/plugins/` (skills.sh / Cursor).
-- **Positioning:** match alpic/nekuda quality, plus two differentiators:
-  an **audit** skill (agent-readiness report before any code is written,
-  loosely aligned with ora's find/read/use layers, one-line ora.ai tie-in)
-  and **framework depth** (per-framework reference files: React/Next, Vue,
-  Svelte, vanilla/MPA).
+- **Emphasis:** two things beyond the core workflow: an **audit** skill
+  (agent-readiness report before any code is written, aligned with ora's
+  find/read/use framing) and **framework depth** (per-framework reference
+  files: React/Next, Vue, Svelte, vanilla/MPA).
 
 ## Structure
 

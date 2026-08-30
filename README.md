@@ -75,6 +75,16 @@ imperative `registerTool`, or a bridge to an MCP server you already run.
 - For browser verification: Chrome with the WebMCP flag or origin trial,
   or `@mcp-b/webmcp-polyfill`.
 
+## Development
+
+- `node scripts/check.mjs` runs the repo checks CI runs: manifest
+  validity, version sync, skill frontmatter, link integrity.
+- `tests/fixtures/bookshop/` is a small static site for exercising the
+  skills by hand; its README lists the expected outcome per skill.
+- `evals/` holds cases for `claude plugin eval` (early access).
+- Issues and PRs welcome. The skills are plain markdown; the bar for
+  changes is accuracy against the current spec and Chrome docs.
+
 ## WebMCP resources
 
 - Spec: https://webmachinelearning.github.io/webmcp/

@@ -14,7 +14,7 @@ an LLM judge. `scaffold_script` copies the bookshop fixture
 real site; pass `--scaffold` to enable it.
 
 Status: authored against the shape documented by `claude plugin eval
---help`; not yet executed because the command is early access here.
+--help`; not yet executed because the command is still in early access.
 Re-verify field names with `claude plugin eval init --bare` once enabled,
 and adjust if the scaffolded template disagrees.
 
