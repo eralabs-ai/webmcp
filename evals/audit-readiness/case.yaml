@@ -1,0 +1,7 @@
+# Field names per `claude plugin eval --help`; re-verify against
+# `claude plugin eval init --bare` output once early access is enabled.
+runs: 3
+max_turns: 40
+timeout_seconds: 600
+scaffold_script: |
+  cp -R "$REPO_ROOT/tests/fixtures/bookshop/." .
