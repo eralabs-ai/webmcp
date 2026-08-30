@@ -9,6 +9,32 @@ permissions:
   contents: read
 
 jobs:
+  # Backstops the local commit-msg hook for clones that skipped the root
+  # npm install. Lints every PR commit plus the PR title, which becomes
+  # the squash-merge commit message. The title travels through an env var,
+  # never expression interpolation into the script (see spec-drift-watch).
+  commitlint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install commit tooling
+        run: npm ci
+      - name: Lint PR commit messages
+        run: npx --no -- commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      - name: Lint PR title (squash commit message)
+        run: printf '%s\n' "$PR_TITLE" | npx --no -- commitlint --verbose
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+
   check:
     runs-on: ubuntu-latest
     steps:
