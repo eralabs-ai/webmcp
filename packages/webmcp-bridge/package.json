@@ -48,7 +48,9 @@
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "lint": "eslint --cache --cache-location .eslintcache .",
     "test": "vitest run",
-    "prepublishOnly": "npm run build && npm test"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "verify:pack": "node scripts/verify-pack.mjs",
+    "prepublishOnly": "npm run build && npm test && npm run verify:pack"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0"

@@ -3,3 +3,7 @@ node_modules/
 dist/
 *.log
 .eslintcache
+
+# claude code local harness state (worktrees from EnterWorktree, per-user permissions)
+.claude/worktrees/
+.claude/settings.local.json

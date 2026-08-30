@@ -1,0 +1,57 @@
+version: 2
+
+updates:
+  # Root package: commit tooling only (commitlint, husky) — all dev, so
+  # routine bumps group into one reviewable PR.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      dev-minor-patch:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+
+  # The published bridge package. Runtime deps (@modelcontextprotocol/sdk)
+  # stay individual PRs; dev bumps group.
+  - package-ecosystem: npm
+    directory: "/packages/webmcp-bridge"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      dev-minor-patch:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+
+  # Keeps the SHA-pinned actions in .github/workflows current. Pinning without
+  # this is how a workflow quietly rots on an unmaintained action version.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns:
+          - "*"
