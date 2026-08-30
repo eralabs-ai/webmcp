@@ -54,8 +54,14 @@ useWebMcpBridge({ url: "https://mcp.example.com/mcp" });
   `tools/list_changed` notifications; registrations re-sync live.
 - MCP annotations map to WebMCP hints: `readOnlyHint` passes through;
   `openWorldHint` sets `untrustedContentHint`.
-- MCP error results (`isError: true`) throw, so agents get an actionable
-  failure instead of a fake success.
+- Names and descriptions are made WebMCP-legal: names outside
+  `[a-zA-Z0-9_.-]` are sanitized (and clamped to 128 chars, deduplicated on
+  collision); a missing description falls back to the tool's title, then a
+  generated line.
+- Results unwrap for agents: `structuredContent` when the server sends it,
+  otherwise text-only `content` joins to a plain string; MCP error results
+  (`isError: true`) throw, so agents get an actionable failure instead of a
+  fake success.
 - Browsers without WebMCP get a console warning and an inert bridge; the
   page keeps working.
 

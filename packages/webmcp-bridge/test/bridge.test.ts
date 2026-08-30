@@ -5,13 +5,23 @@ import { z } from "zod";
 import { createWebMcpBridge } from "../src/index.js";
 import type { ModelContextLike, ModelContextTool } from "../src/types.js";
 
-/** In-memory ModelContext capturing registrations, like the browser would. */
+/**
+ * In-memory ModelContext capturing registrations, enforcing the spec's
+ * registration contract the way the browser would: unique names, ASCII
+ * [a-zA-Z0-9_.-] names of 1-128 chars, non-empty descriptions.
+ */
 function fakeModelContext() {
   const tools = new Map<string, ModelContextTool>();
   const mc: ModelContextLike = {
     async registerTool(tool, options) {
       if (tools.has(tool.name)) {
         throw new DOMException(`duplicate tool ${tool.name}`, "InvalidStateError");
+      }
+      if (!/^[a-zA-Z0-9_.-]{1,128}$/.test(tool.name)) {
+        throw new DOMException(`invalid tool name ${tool.name}`, "InvalidStateError");
+      }
+      if (!tool.description) {
+        throw new DOMException(`empty description for ${tool.name}`, "InvalidStateError");
       }
       tools.set(tool.name, tool);
       options?.signal?.addEventListener("abort", () => tools.delete(tool.name));
@@ -149,6 +159,110 @@ describe("createWebMcpBridge", () => {
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(tools.has("book_table")).toBe(true);
     expect(tools.size).toBe(4);
+    await bridge.close();
+  });
+
+  it("unwraps text-only MCP content when there is no structuredContent", async () => {
+    const { clientTransport } = await makeServer();
+    const { mc, tools } = fakeModelContext();
+    const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
+
+    // delete_everything returns content: [{ type: "text", text: "boom" }]
+    // and no structuredContent; agents should get the text, not the MCP
+    // content-block envelope.
+    const result = await tools.get("delete_everything")!.execute({});
+    expect(result).toBe("boom");
+    await bridge.close();
+  });
+
+  it("sanitizes MCP tool names that are illegal in WebMCP", async () => {
+    const server = new McpServer({ name: "test-server", version: "1.0.0" });
+    server.registerTool(
+      "files/list",
+      { description: "List files." },
+      async () => ({ content: [{ type: "text", text: "ok" }] }),
+    );
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const { mc, tools } = fakeModelContext();
+    const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
+
+    expect([...tools.keys()]).toEqual(["files_list"]);
+    expect(bridge.tools).toEqual([
+      { name: "files_list", remoteName: "files/list", description: "List files." },
+    ]);
+    await bridge.close();
+  });
+
+  it("deduplicates sanitized names that collide", async () => {
+    const server = new McpServer({ name: "test-server", version: "1.0.0" });
+    server.registerTool(
+      "files/list",
+      { description: "List files." },
+      async () => ({ content: [{ type: "text", text: "slash" }] }),
+    );
+    server.registerTool(
+      "files_list",
+      { description: "List files, underscore flavor." },
+      async () => ({ content: [{ type: "text", text: "underscore" }] }),
+    );
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const { mc, tools } = fakeModelContext();
+    const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
+
+    expect(tools.size).toBe(2);
+    expect(bridge.tools.map((t) => t.remoteName).sort()).toEqual([
+      "files/list",
+      "files_list",
+    ]);
+    const names = bridge.tools.map((t) => t.name);
+    expect(new Set(names).size).toBe(2);
+    for (const name of names) expect(name).toMatch(/^[a-zA-Z0-9_.-]{1,128}$/);
+    await bridge.close();
+  });
+
+  it("clamps over-long tool names to 128 chars", async () => {
+    const server = new McpServer({ name: "test-server", version: "1.0.0" });
+    server.registerTool(
+      `list_${"x".repeat(140)}`,
+      { description: "Very long name." },
+      async () => ({ content: [{ type: "text", text: "ok" }] }),
+    );
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const { mc, tools } = fakeModelContext();
+    const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
+
+    expect(tools.size).toBe(1);
+    const [name] = [...tools.keys()];
+    expect(name.length).toBe(128);
+    expect(name.startsWith("list_xxx")).toBe(true);
+    await bridge.close();
+  });
+
+  it("falls back to title, then a generated description, when the MCP tool has none", async () => {
+    const server = new McpServer({ name: "test-server", version: "1.0.0" });
+    server.registerTool(
+      "titled_only",
+      { title: "Titled Tool" },
+      async () => ({ content: [{ type: "text", text: "ok" }] }),
+    );
+    server.registerTool(
+      "bare_tool",
+      {},
+      async () => ({ content: [{ type: "text", text: "ok" }] }),
+    );
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const { mc, tools } = fakeModelContext();
+    const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
+
+    expect(tools.size).toBe(2);
+    expect(tools.get("titled_only")!.description).toBe("Titled Tool");
+    const bare = tools.get("bare_tool")!.description;
+    expect(bare.length).toBeGreaterThan(0);
+    expect(bare).toContain("bare_tool");
     await bridge.close();
   });
 

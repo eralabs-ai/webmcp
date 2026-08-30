@@ -12,10 +12,12 @@ site-wide scope. Consequences:
   loaded by the base template so "everywhere" tools exist on every page.
 - Journey tools that span pages must persist their progress the way the
   site already does (session, cart cookie) and re-register on the next page.
-- **Declarative-first is usually right for MPAs.** Server-rendered sites
-  are form-heavy, forms need zero JS to become tools, and attributes travel
-  with the template. Reach for imperative tools only for journeys forms
-  cannot express.
+- **Declarative-first fits MPAs when Chrome-preview reach is enough.**
+  Server-rendered sites are form-heavy, forms need zero JS to become tools,
+  and attributes travel with the template. But form attributes are a Chrome
+  origin trial only, and imperative-only agent runtimes never see them —
+  use imperative tools for journeys forms cannot express **and** whenever
+  the target runtime is unknown or reads only `registerTool` registrations.
 
 ## Wiring without a bundler
 
@@ -37,7 +39,7 @@ build. Check the site's CSP allows same-origin module scripts.
 
 ```js
 // /js/webmcp/site-tools.js
-const mc = document.modelContext ?? navigator.modelContext ?? null;
+const mc = document.modelContext ?? navigator.modelContext ?? null; // navigator: legacy (pre-Chrome-150) fallback
 
 if (mc?.registerTool) {
   const controller = new AbortController();

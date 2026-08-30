@@ -67,12 +67,13 @@ auth state once and settle everything for that page in one pass.
 ## Console fallback
 
 ```js
-const mc = document.modelContext ?? navigator.modelContext;
+const mc = document.modelContext ?? navigator.modelContext; // navigator: legacy fallback
 const tools = await mc.getTools();
 console.table(tools.map((t) => ({ name: t.name, description: t.description })));
 
 const tool = tools.find((t) => t.name === "search_docs");
-await mc.executeTool(tool, { query: "webmcp" });
+const raw = await mc.executeTool(tool, { query: "webmcp" });
+console.log(JSON.parse(raw)); // executeTool resolves to a JSON string, not an object
 ```
 
 `getTools()` / `executeTool()` are spec APIs: the page can be driven

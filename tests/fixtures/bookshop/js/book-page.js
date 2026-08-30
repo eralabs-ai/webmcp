@@ -1,7 +1,7 @@
 // Contextual tool for the book page: bakes the viewed book into the
 // registration (no bookId parameter) and registers only while in stock.
 const ctx = JSON.parse(document.getElementById("webmcp-context")?.textContent ?? "{}");
-const mc = document.modelContext ?? navigator.modelContext ?? null;
+const mc = document.modelContext ?? navigator.modelContext ?? null; // navigator: legacy (pre-Chrome-150) fallback
 
 const cartCount = document.getElementById("cart-count");
 const addButton = document.getElementById("add-to-cart");
