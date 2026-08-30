@@ -1,6 +1,6 @@
 {
   "name": "@ora-ai/webmcp-bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bridge a remote MCP server into the page: discover its tools and register them on document.modelContext for in-browser AI agents.",
   "keywords": [
     "webmcp",
