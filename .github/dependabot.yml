@@ -33,6 +33,16 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     groups:
+      # eslint and @eslint/js peer-depend on each other across majors; bumping
+      # one without the other breaks npm ci, so majors ship as one PR.
+      eslint-major:
+        patterns:
+          - eslint
+          - "@eslint/*"
+          - typescript-eslint
+          - "@typescript-eslint/*"
+        update-types:
+          - major
       dev-minor-patch:
         dependency-type: development
         update-types:
@@ -57,6 +67,14 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     groups:
+      eslint-major:
+        patterns:
+          - eslint
+          - "@eslint/*"
+          - typescript-eslint
+          - "@typescript-eslint/*"
+        update-types:
+          - major
       dev-minor-patch:
         dependency-type: development
         update-types:
