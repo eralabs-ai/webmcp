@@ -36,10 +36,11 @@ steps.
 ## Bridge: reuse an existing remote MCP server
 
 When the product already ships a Streamable HTTP / SSE MCP server, its tools
-and journeys are already designed. `webmcp-proxy`
-(https://www.npmjs.com/package/webmcp-proxy) lists the remote tools and
-registers them on `document.modelContext` so browsing agents see them on the
-page. Do not hand-wrap each remote tool.
+and journeys are already designed. Bridge them onto `document.modelContext`
+so browsing agents see them on the page: the `webmcp-proxy` library when you
+control the frontend, or Cloudflare's zero-code WebMCP toggle when the site
+is served through Cloudflare. Do not hand-wrap each remote tool.
+Implementation and checklists: [bridge-existing-mcp.md](bridge-existing-mcp.md).
 
 Trade-offs to state out loud:
 

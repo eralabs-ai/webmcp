@@ -112,8 +112,9 @@ Pick the per-strategy guide, then the framework guide that matches the stack:
   [references/declarative-forms.md](references/declarative-forms.md)
 - Imperative `registerTool` design (naming, schemas, returns, lifecycle):
   [references/tool-design.md](references/tool-design.md)
-- Bridge to an existing MCP server: prefer `webmcp-proxy`; never hand-wrap
-  each remote tool (see [references/strategies.md](references/strategies.md))
+- Bridge to an existing MCP server (`webmcp-proxy`, or Cloudflare's
+  zero-code toggle when the site is on Cloudflare); never hand-wrap each
+  remote tool: [references/bridge-existing-mcp.md](references/bridge-existing-mcp.md)
 - Framework wiring: [references/frameworks/react-next.md](references/frameworks/react-next.md),
   [references/frameworks/vue.md](references/frameworks/vue.md),
   [references/frameworks/svelte.md](references/frameworks/svelte.md),
