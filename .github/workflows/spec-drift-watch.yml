@@ -1,0 +1,103 @@
+name: Spec Drift Watch
+
+# skills/webmcp/references/spec.md is a dated snapshot of a living draft.
+# This watches the WebMCP spec repo for commits landing after the pinned
+# snapshot and maintains one issue telling us to re-verify the skill
+# content. Weekly cadence: spec churn is monthly, not hourly. Read-only
+# against the public spec repo; writes nothing but an issue in this repo.
+#
+# Upstream commit messages are untrusted input: they travel only through
+# files (never through GitHub expression interpolation into run scripts),
+# so a hostile spec-repo commit message cannot inject into the runner
+# shell. Pattern adapted from ora's spec-drift-watch.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  webmcp-spec:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SPEC_REPO: webmachinelearning/webmcp
+      SNAPSHOT_FILE: skills/webmcp/references/spec.md
+      ISSUE_TITLE: "WebMCP spec moved past the pinned snapshot - re-verify skill content"
+      ISSUE_LABEL: spec-drift
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve pinned snapshot date
+        id: snapshot
+        run: |
+          date=$(grep -oE '^Snapshot: [0-9]{4}-[0-9]{2}-[0-9]{2}$' "$SNAPSHOT_FILE" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+          [ -n "$date" ] || { echo "could not resolve snapshot date from $SNAPSHOT_FILE"; exit 1; }
+          echo "date=$date" >> "$GITHUB_OUTPUT"
+
+      - name: Check for spec commits past the snapshot
+        id: drift
+        run: |
+          commits=$(curl -sf "https://api.github.com/repos/$SPEC_REPO/commits?since=${SNAPSHOT_DATE}T23:59:59Z&per_page=100")
+          count=$(echo "$commits" | jq length)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          # Untrusted commit text goes to a file, never into a script via expression interpolation.
+          echo "$commits" | jq -r '.[] | "- \(.commit.committer.date | split("T")[0]) [`\(.sha[0:7])`](\(.html_url)) \(.commit.message | split("\n")[0])"' \
+            > "$RUNNER_TEMP/drift-list.md"
+        env:
+          SNAPSHOT_DATE: ${{ steps.snapshot.outputs.date }}
+
+      - name: Find existing drift issue
+        id: existing
+        run: |
+          number=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "$ISSUE_LABEL" --state open --json number,title \
+            --jq "[.[] | select(.title == env.ISSUE_TITLE)][0].number // empty")
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Open or refresh the drift issue
+        if: steps.drift.outputs.count != '0'
+        env:
+          SNAPSHOT_DATE: ${{ steps.snapshot.outputs.date }}
+          DRIFT_COUNT: ${{ steps.drift.outputs.count }}
+          EXISTING_NUMBER: ${{ steps.existing.outputs.number }}
+        run: |
+          gh label create "$ISSUE_LABEL" --repo "$GITHUB_REPOSITORY" \
+            --description "The WebMCP spec moved past the pinned snapshot in spec.md" \
+            --color D93F0B 2>/dev/null || true
+          body_file=$(mktemp)
+          cat > "$body_file" <<BODY
+          ## Motivation
+
+          The W3C WebMCP draft (\`$SPEC_REPO\`) has $DRIFT_COUNT commit(s) since the pinned snapshot **$SNAPSHOT_DATE**. The skills teach that snapshot, so unreviewed spec movement can silently make generated code wrong - the exact flaw this plugin exploits in stale competitors.
+
+          ## Objective
+
+          Re-verify \`skills/webmcp/references/spec.md\` (and \`runtime.md\`, the framework guides, and \`skills/verify/SKILL.md\` where behavior moved) against the current rendered draft (https://webmachinelearning.github.io/webmcp/) and the Chrome docs. Update the \`Snapshot:\` line in spec.md to at or past the newest commit below. \`node scripts/check.mjs\` must still pass.
+
+          ### Spec commits since the snapshot
+
+          BODY
+          cat "$RUNNER_TEMP/drift-list.md" >> "$body_file"
+          cat >> "$body_file" <<BODY
+
+          ---
+          _Maintained by \`.github/workflows/spec-drift-watch.yml\`; refreshed on each run, closed automatically when the snapshot catches up._
+          BODY
+          if [ -n "$EXISTING_NUMBER" ]; then
+            gh issue edit "$EXISTING_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file "$body_file"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$ISSUE_TITLE" --label "$ISSUE_LABEL" --body-file "$body_file"
+          fi
+
+      - name: Close the drift issue once the snapshot caught up
+        if: steps.drift.outputs.count == '0' && steps.existing.outputs.number != ''
+        env:
+          SNAPSHOT_DATE: ${{ steps.snapshot.outputs.date }}
+          EXISTING_NUMBER: ${{ steps.existing.outputs.number }}
+        run: |
+          gh issue close "$EXISTING_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --comment "The pinned snapshot ($SNAPSHOT_DATE) now covers every spec commit - closing."

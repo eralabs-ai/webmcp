@@ -1,0 +1,8 @@
+[
+  { "title": "The Marginalia Hotel", "author": "R. Okafor", "price": 24, "url": "book.html", "tags": ["fiction", "novel", "hardcover"] },
+  { "title": "Field Notes on Rivers", "author": "T. Lindqvist", "price": 18, "url": "index.html", "tags": ["nature", "essays"] },
+  { "title": "A Short History of Shelving", "author": "M. Beaumont", "price": 21, "url": "index.html", "tags": ["design", "history"] },
+  { "title": "Gulls and Other Critics", "author": "P. Andrade", "price": 15, "url": "index.html", "tags": ["poetry"] },
+  { "title": "The Proof Room", "author": "S. Ihara", "price": 19, "url": "index.html", "tags": ["fiction", "mystery"] },
+  { "title": "Ninety Days of Type", "author": "L. Farkas", "price": 32, "url": "index.html", "tags": ["design", "typography"] }
+]

@@ -26,10 +26,13 @@ Secure context is required: HTTPS in production, localhost in development.
 
 ## Native support
 
-Chrome ships WebMCP behind an origin trial and flags (`chrome://flags`
-WebMCP entry / `--enable-features=WebMCP`). Check the Chrome docs linked in
-SKILL.md for the current channel and version; availability changes fast.
-Prefer native when the target agent browser has it.
+Chrome ships WebMCP as an early preview behind
+`chrome://flags/#enable-webmcp-testing`. The API surface has shifted across
+Chrome releases (surface moved to `document`, promise-returning
+`registerTool`, always-present execute signal); the timeline and error
+taxonomy live in [spec.md](spec.md). Always `await registerTool()` in a
+`try`/`catch` so the same code works on every build. Check the Chrome docs
+linked in SKILL.md for current availability; it changes fast.
 
 ## Polyfill
 

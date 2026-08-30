@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paged &amp; Bound — independent bookshop</title>
+  <meta name="description" content="A small independent bookshop. Browse and order new and used books.">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+    form:tool-form-active { outline: 2px solid rebeccapurple; }
+    li { margin: 0.4rem 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Paged &amp; Bound</h1>
+    <nav><a href="index.html">Home</a> · <a href="book.html">Featured book</a></nav>
+  </header>
+
+  <main>
+    <h2>Find a book</h2>
+    <!-- Declarative candidate: a real form the webmcp skill should propose
+         annotating with toolname / tooldescription. -->
+    <form action="index.html" method="get" id="search-form">
+      <label for="q">Search the catalog</label>
+      <input id="q" type="search" name="q" required>
+      <button type="submit">Search</button>
+    </form>
+    <ul id="results" aria-live="polite"></ul>
+
+    <h2>New arrivals</h2>
+    <ul>
+      <li><a href="book.html">The Marginalia Hotel — R. Okafor</a></li>
+      <li>Field Notes on Rivers — T. Lindqvist</li>
+      <li>A Short History of Shelving — M. Beaumont</li>
+    </ul>
+
+    <h2>Newsletter</h2>
+    <!-- Second declarative candidate; low-risk, autosubmit debatable. -->
+    <form action="index.html" method="get" id="newsletter-form">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" required>
+      <button type="submit">Subscribe</button>
+    </form>
+  </main>
+
+  <script type="module" src="js/webmcp-tools.js"></script>
+</body>
+</html>

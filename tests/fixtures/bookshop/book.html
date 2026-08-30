@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Marginalia Hotel — Paged &amp; Bound</title>
+  <meta name="description" content="The Marginalia Hotel by R. Okafor. Hardcover, in stock.">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Paged &amp; Bound</h1>
+    <nav><a href="index.html">Home</a></nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>The Marginalia Hotel</h2>
+      <p>R. Okafor · hardcover · $24 · <strong id="stock">in stock</strong></p>
+      <p>A novel about a hotel where every guest annotates the same library.</p>
+      <button id="add-to-cart">Add to cart</button>
+      <p>Cart: <span id="cart-count">0</span></p>
+    </article>
+  </main>
+
+  <!-- Server-known context for the page's contextual tool, MPA-style
+       (see skills/webmcp/references/frameworks/vanilla-mpa.md). -->
+  <script type="application/json" id="webmcp-context">
+    {"bookId": "marginalia-hotel", "inStock": true, "price": 24}
+  </script>
+  <script type="module" src="js/webmcp-tools.js"></script>
+  <script type="module" src="js/book-page.js"></script>
+</body>
+</html>

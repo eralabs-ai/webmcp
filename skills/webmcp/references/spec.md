@@ -1,8 +1,12 @@
 # WebMCP API contract (current spec snapshot)
 
+Snapshot: 2026-08-30
+
 Snapshot of https://webmachinelearning.github.io/webmcp/ plus Chrome's
-origin-trial surface, taken 2026-08. When this file and the live spec
-disagree, the live spec wins; re-check it before relying on edge details.
+preview surface. When this file and the live spec disagree, the live spec
+wins; re-check it before relying on edge details. The `Snapshot:` line
+above is machine-read by `.github/workflows/spec-drift-watch.yml`; move it
+forward whenever this file is re-verified against the current draft.
 
 ## Surface
 
@@ -113,20 +117,49 @@ Events: `toolactivated` (agent pre-filled fields) and `toolcancel` (user
 cancelled / `reset()`).
 CSS state: `form:tool-form-active`, submit control `:tool-submit-active`.
 
-## Browser availability (verify before promising)
+## Registration failure taxonomy
 
-- Chrome ships WebMCP behind an origin trial and flags
-  (`chrome://flags` WebMCP entry / `--enable-features=WebMCP`; DevTools
-  integration needs a recent Dev/Canary build). Edge tracks Chrome.
-- Everything else needs `@mcp-b/webmcp-polyfill`.
-- Availability moves quickly; check the Chrome docs listed in SKILL.md
-  rather than trusting version numbers found in third-party READMEs.
+`await registerTool()` inside `try`/`catch`; on current Chrome it returns a
+`Promise<void>` that rejects, while older preview builds threw
+synchronously, and the same `await` + `catch` handles both:
+
+| Error | Cause |
+| --- | --- |
+| `InvalidStateError` | duplicate name; empty `name`/`description`; name over 128 chars or outside `[a-zA-Z0-9_.-]` |
+| `NotAllowedError` | `"tools"` Permissions Policy denied (cross-origin iframe missing `allow="tools"`) |
+| `TypeError` / serialization errors | non-JSON-serializable or circular `inputSchema` |
+
+## Chrome preview timeline (verify before promising)
+
+WebMCP ships as a Chrome early preview behind
+`chrome://flags/#enable-webmcp-testing`. The surface has moved with each
+release; these transitions explain most stale examples in the wild:
+
+| Since | Change |
+| --- | --- |
+| Chrome 146 | preview available behind the flag, `navigator.modelContext` surface |
+| Chrome 148 | `registerTool()` accepts `{ signal }`; `unregisterTool()` removed |
+| Chrome 150 | getter moved to `document.modelContext`; `navigator.modelContext` deprecated |
+| Chrome 151 | `registerTool()` returns `Promise<void>` (was synchronous) |
+| Chrome 153 | `execute` always receives `{ signal }`; unregistering no longer cancels in-flight executions (lifecycle and execution cancellation are independent) |
+
+Non-Chromium browsers need `@mcp-b/webmcp-polyfill`. Availability moves
+quickly; trust the Chrome docs listed in SKILL.md over version numbers in
+third-party READMEs, including this table.
 
 ## Removed / renamed things still found in old examples
 
 | Seen in the wild | Status |
 | --- | --- |
-| `navigator.modelContext` as primary surface | replaced by `document.modelContext` |
+| `navigator.modelContext` as primary surface | deprecated; use `document.modelContext` first |
 | `unregisterTool(name)` | removed; abort the registration signal |
-| `provideContext()` / `clearContext()` | removed |
+| `provideContext()` / `clearContext()` / `toolparamtitle` | removed |
+| synchronous `registerTool()` examples with no `await` | works only on old previews; always `await` |
 | returning DOM nodes or class instances from `execute` | never valid; JSON-serializable only |
+
+## Inspection tooling
+
+The Model Context Tool Inspector extension (GoogleChromeLabs/webmcp-tools)
+lists registered tools and executes them manually; some preview tooling
+uses `navigator.modelContextTesting`. Diagnostic aids only, never runtime
+dependencies.
