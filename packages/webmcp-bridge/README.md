@@ -1,0 +1,72 @@
+# @eralabs/webmcp-bridge
+
+Bridge a remote MCP server into the page. The bridge connects to your MCP
+endpoint from the browser, discovers its tools, and registers each one on
+`document.modelContext`, so in-browser AI agents can call the tools you
+already ship. Built on the official `@modelcontextprotocol/sdk`. MIT.
+
+Part of the [webmcp plugin](https://github.com/eralabs-ai/webmcp) by
+[ora](https://ora.ai).
+
+## Install
+
+```
+npm install @eralabs/webmcp-bridge
+```
+
+## Use
+
+```js
+import { createWebMcpBridge } from "@eralabs/webmcp-bridge";
+
+const bridge = await createWebMcpBridge({
+  url: "https://mcp.example.com/mcp",
+  headers: { Authorization: `Bearer ${token}` }, // if your server needs it
+  include: ["search_products", "get_order_status"], // curate what you expose
+  namePrefix: "acme.", // optional; avoids clashes with page tools
+});
+
+bridge.tools;         // what got registered
+await bridge.close(); // unregister everything and disconnect
+```
+
+React (renders nothing; mount once near the root):
+
+```jsx
+import { WebMcpBridgeProvider } from "@eralabs/webmcp-bridge/react";
+
+<WebMcpBridgeProvider url="https://mcp.example.com/mcp" />
+```
+
+Vue:
+
+```js
+import { useWebMcpBridge } from "@eralabs/webmcp-bridge/vue";
+
+useWebMcpBridge({ url: "https://mcp.example.com/mcp" });
+```
+
+## Behavior
+
+- Transports: Streamable HTTP first, legacy SSE fallback. Or pass your
+  own `transport` (custom auth, testing).
+- Tool discovery follows pagination and, by default, the server's
+  `tools/list_changed` notifications; registrations re-sync live.
+- MCP annotations map to WebMCP hints: `readOnlyHint` passes through;
+  `openWorldHint` sets `untrustedContentHint`.
+- MCP error results (`isError: true`) throw, so agents get an actionable
+  failure instead of a fake success.
+- Browsers without WebMCP get a console warning and an inert bridge; the
+  page keeps working.
+
+## Requirements
+
+- Your MCP server must allow CORS from the page's origin; the browser
+  calls it directly.
+- WebMCP in the browser: Chrome behind
+  `chrome://flags/#enable-webmcp-testing`, or a polyfill.
+- Authorization stays your server's job. The bridge adds none.
+
+## License
+
+MIT

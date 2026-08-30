@@ -18,3 +18,12 @@ jobs:
           node-version: 22
       - name: Repo sanity checks
         run: node scripts/check.mjs
+      - name: Bridge package install
+        working-directory: packages/webmcp-bridge
+        run: npm ci
+      - name: Bridge package build
+        working-directory: packages/webmcp-bridge
+        run: npm run build
+      - name: Bridge package tests
+        working-directory: packages/webmcp-bridge
+        run: npm test

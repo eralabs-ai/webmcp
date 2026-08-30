@@ -83,7 +83,7 @@ export function WebMCPProvider() { return null; }
 
 ## Existing helper packages
 
-`usewebmcp` and `@mcp-b/react-webmcp` provide maintained hooks with the
-same semantics. Prefer them only when the user opts in to a dependency;
-the ~20-line hook above keeps the repo dependency-free and is usually the
-right default.
+The community `@mcp-b/react-webmcp` package provides maintained hooks
+with similar semantics. Prefer it only when the user opts in to a
+dependency; the ~20-line hook above keeps the repo dependency-free and
+is usually the right default.

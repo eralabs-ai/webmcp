@@ -1,0 +1,75 @@
+{
+  "name": "@eralabs/webmcp-bridge",
+  "version": "0.1.0",
+  "description": "Bridge a remote MCP server into the page: discover its tools and register them on document.modelContext for in-browser AI agents.",
+  "keywords": [
+    "webmcp",
+    "mcp",
+    "bridge",
+    "model-context",
+    "browser-agents",
+    "agent-ready",
+    "ora"
+  ],
+  "homepage": "https://github.com/eralabs-ai/webmcp/tree/main/packages/webmcp-bridge",
+  "bugs": {
+    "url": "https://github.com/eralabs-ai/webmcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eralabs-ai/webmcp.git",
+    "directory": "packages/webmcp-bridge"
+  },
+  "license": "MIT",
+  "author": "Ora (https://github.com/eralabs-ai)",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "default": "./dist/react.js"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "default": "./dist/vue.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "vue": "^3.5.0",
+    "zod": "^4.5.4"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "vue": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  }
+}

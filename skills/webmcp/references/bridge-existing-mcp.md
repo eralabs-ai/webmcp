@@ -5,43 +5,52 @@ SSE): its tools already encode the designed journeys, so bridge them onto
 `document.modelContext` instead of re-implementing each one in page JS.
 
 Three real paths exist. Pick by hosting and code access, and confirm the
-choice with the user; the packages below are third-party, so verify
-current versions and APIs on npm before pinning anything.
+choice with the user.
 
 ## Decision
 
 | Situation | Path |
 | --- | --- |
 | Site is served through Cloudflare | Cloudflare's WebMCP feature (zero code changes) |
-| You control the frontend code (any host) | `webmcp-proxy` library in the page |
+| You control the frontend code (any host) | `@eralabs/webmcp-bridge` library in the page |
 | You need page tools visible to MCP clients (Claude, Cursor, extensions) | different direction; use the `@mcp-b` bridge ecosystem, not this doc |
 
 That third row is a common confusion: `@mcp-b/global` and the WebMCP-org
 bridges mostly translate **page tools out to the MCP ecosystem**. This
 doc's job is the opposite direction: **remote MCP tools into the page**.
 
-## Path A: `webmcp-proxy` (in-page library)
+## Path A: `@eralabs/webmcp-bridge` (in-page library)
 
-Published by Alpic (ISC license); connects to the MCP endpoint from the
-browser, discovers tools, and registers each on `document.modelContext`
-via `registerTool`, so page-local tools coexist with bridged ones.
+This plugin's own package (MIT, maintained in this repository under
+`packages/webmcp-bridge`); built on the official
+`@modelcontextprotocol/sdk`. It connects to the MCP endpoint from the
+browser (Streamable HTTP with SSE fallback), discovers tools (with
+pagination), and registers each on `document.modelContext` via
+`registerTool`, so page-local tools coexist with bridged ones. It maps
+MCP annotations onto WebMCP hints, throws on MCP error results so agents
+get actionable failures, follows `tools/list_changed` re-syncs, and
+no-ops with a warning in browsers without WebMCP.
 
 ```bash
-npm install webmcp-proxy
+npm install @eralabs/webmcp-bridge
 ```
 
 ```js
-import { createWebMcpProxy } from "webmcp-proxy";
+import { createWebMcpBridge } from "@eralabs/webmcp-bridge";
 
-const proxy = await createWebMcpProxy({
+const bridge = await createWebMcpBridge({
   url: "https://mcp.example.com/mcp",
   // headers: { Authorization: `Bearer ${token}` },  // when the server needs it
+  // include: ["search_products", "get_order_status"],  // curate; do not expose everything
+  // namePrefix: "acme.",                              // avoid clashes with page tools
 });
+// bridge.tools -> registered tools; bridge.close() -> unregister + disconnect
 ```
 
-React and Vue wrappers exist (`webmcp-proxy/react`, `webmcp-proxy/vue`).
-The package is young; treat it as a fast first patch, read its current
-README before wiring, and pin the version.
+React: `import { useWebMcpBridge, WebMcpBridgeProvider } from "@eralabs/webmcp-bridge/react"`.
+Vue: `import { useWebMcpBridge } from "@eralabs/webmcp-bridge/vue"`.
+Prefer `include` over bridging every server tool: the curated-journeys
+rule applies to bridged tools too.
 
 Checklist before shipping:
 
