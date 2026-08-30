@@ -1,0 +1,17 @@
+{
+  "name": "webmcp-repo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repo tooling for the webmcp plugin: commit hooks and delegated checks. The publishable package lives in packages/webmcp-bridge.",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "lint": "npm --prefix packages/webmcp-bridge run lint",
+    "test": "npm --prefix packages/webmcp-bridge test",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "husky": "^9.1.7"
+  }
+}

@@ -21,6 +21,9 @@ jobs:
       - name: Bridge package install
         working-directory: packages/webmcp-bridge
         run: npm ci
+      - name: Bridge package lint
+        working-directory: packages/webmcp-bridge
+        run: npm run lint
       - name: Bridge package build
         working-directory: packages/webmcp-bridge
         run: npm run build
