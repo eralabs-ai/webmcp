@@ -1,4 +1,4 @@
-# @eralabs/webmcp-bridge
+# @ora-ai/webmcp-bridge
 
 Bridge a remote MCP server into the page. The bridge connects to your MCP
 endpoint from the browser, discovers its tools, and registers each one on
@@ -11,13 +11,13 @@ Part of the [webmcp plugin](https://github.com/eralabs-ai/webmcp) by
 ## Install
 
 ```
-npm install @eralabs/webmcp-bridge
+npm install @ora-ai/webmcp-bridge
 ```
 
 ## Use
 
 ```js
-import { createWebMcpBridge } from "@eralabs/webmcp-bridge";
+import { createWebMcpBridge } from "@ora-ai/webmcp-bridge";
 
 const bridge = await createWebMcpBridge({
   url: "https://mcp.example.com/mcp",
@@ -33,7 +33,7 @@ await bridge.close(); // unregister everything and disconnect
 React (renders nothing; mount once near the root):
 
 ```jsx
-import { WebMcpBridgeProvider } from "@eralabs/webmcp-bridge/react";
+import { WebMcpBridgeProvider } from "@ora-ai/webmcp-bridge/react";
 
 <WebMcpBridgeProvider url="https://mcp.example.com/mcp" />
 ```
@@ -41,7 +41,7 @@ import { WebMcpBridgeProvider } from "@eralabs/webmcp-bridge/react";
 Vue:
 
 ```js
-import { useWebMcpBridge } from "@eralabs/webmcp-bridge/vue";
+import { useWebMcpBridge } from "@ora-ai/webmcp-bridge/vue";
 
 useWebMcpBridge({ url: "https://mcp.example.com/mcp" });
 ```

@@ -37,7 +37,7 @@ steps.
 
 When the product already ships a Streamable HTTP / SSE MCP server, its tools
 and journeys are already designed. Bridge them onto `document.modelContext`
-so browsing agents see them on the page: the `@eralabs/webmcp-bridge`
+so browsing agents see them on the page: the `@ora-ai/webmcp-bridge`
 library when you control the frontend, or Cloudflare's zero-code WebMCP
 toggle when the site is served through Cloudflare. Do not hand-wrap each
 remote tool.

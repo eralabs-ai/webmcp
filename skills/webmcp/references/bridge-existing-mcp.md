@@ -12,14 +12,14 @@ choice with the user.
 | Situation | Path |
 | --- | --- |
 | Site is served through Cloudflare | Cloudflare's WebMCP feature (zero code changes) |
-| You control the frontend code (any host) | `@eralabs/webmcp-bridge` library in the page |
+| You control the frontend code (any host) | `@ora-ai/webmcp-bridge` library in the page |
 | You need page tools visible to MCP clients (Claude, Cursor, extensions) | different direction; use the `@mcp-b` bridge ecosystem, not this doc |
 
 That third row is a common confusion: `@mcp-b/global` and the WebMCP-org
 bridges mostly translate **page tools out to the MCP ecosystem**. This
 doc's job is the opposite direction: **remote MCP tools into the page**.
 
-## Path A: `@eralabs/webmcp-bridge` (in-page library)
+## Path A: `@ora-ai/webmcp-bridge` (in-page library)
 
 This plugin's own package (MIT, maintained in this repository under
 `packages/webmcp-bridge`); built on the official
@@ -32,11 +32,11 @@ get actionable failures, follows `tools/list_changed` re-syncs, and
 no-ops with a warning in browsers without WebMCP.
 
 ```bash
-npm install @eralabs/webmcp-bridge
+npm install @ora-ai/webmcp-bridge
 ```
 
 ```js
-import { createWebMcpBridge } from "@eralabs/webmcp-bridge";
+import { createWebMcpBridge } from "@ora-ai/webmcp-bridge";
 
 const bridge = await createWebMcpBridge({
   url: "https://mcp.example.com/mcp",
@@ -47,8 +47,8 @@ const bridge = await createWebMcpBridge({
 // bridge.tools -> registered tools; bridge.close() -> unregister + disconnect
 ```
 
-React: `import { useWebMcpBridge, WebMcpBridgeProvider } from "@eralabs/webmcp-bridge/react"`.
-Vue: `import { useWebMcpBridge } from "@eralabs/webmcp-bridge/vue"`.
+React: `import { useWebMcpBridge, WebMcpBridgeProvider } from "@ora-ai/webmcp-bridge/react"`.
+Vue: `import { useWebMcpBridge } from "@ora-ai/webmcp-bridge/vue"`.
 Prefer `include` over bridging every server tool: the curated-journeys
 rule applies to bridged tools too.
 

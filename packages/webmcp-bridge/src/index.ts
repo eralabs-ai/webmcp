@@ -36,7 +36,7 @@ function resolveModelContext(
 
 async function connect(options: WebMcpBridgeOptions): Promise<Client> {
   const client = new Client(
-    options.clientInfo ?? { name: "@eralabs/webmcp-bridge", version: "0.1.0" },
+    options.clientInfo ?? { name: "@ora-ai/webmcp-bridge", version: "0.1.0" },
   );
   if (options.transport) {
     await client.connect(options.transport);

@@ -43,7 +43,7 @@ Three skills. Each one stops for your approval before touching a file.
 | `audit` | Read-only agent-readiness report: scored findings across find/read/use, fix-first list, proposed tool table. Writes no code |
 | `verify` | Runtime check of existing tools: registration, invocation, security lint. Reports each tool as verified, failed, or could-not-verify |
 
-Plus [`@eralabs/webmcp-bridge`](packages/webmcp-bridge/README.md): a small
+Plus [`@ora-ai/webmcp-bridge`](packages/webmcp-bridge/README.md): a small
 MIT library that registers your existing remote MCP server's tools on
 `document.modelContext`, for the bridge strategy. Built on the official
 MCP SDK. Generated page tools still need no SDK at all.

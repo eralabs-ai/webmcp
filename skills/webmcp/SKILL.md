@@ -112,7 +112,7 @@ Pick the per-strategy guide, then the framework guide that matches the stack:
   [references/declarative-forms.md](references/declarative-forms.md)
 - Imperative `registerTool` design (naming, schemas, returns, lifecycle):
   [references/tool-design.md](references/tool-design.md)
-- Bridge to an existing MCP server (`@eralabs/webmcp-bridge`, or
+- Bridge to an existing MCP server (`@ora-ai/webmcp-bridge`, or
   Cloudflare's zero-code toggle when the site is on Cloudflare); never
   hand-wrap each remote tool:
   [references/bridge-existing-mcp.md](references/bridge-existing-mcp.md)
@@ -169,7 +169,7 @@ Make this site agent-ready?
 ├─ Propose journeys with the user first (never skip)
 ├─ Real HTML <form>s that should stay forms?      -> Declarative attributes
 ├─ Packaged scenario (tunnel, store update, nav)? -> Imperative registerTool
-└─ Existing remote MCP server with right tools?   -> Bridge (@eralabs/webmcp-bridge)
+└─ Existing remote MCP server with right tools?   -> Bridge (@ora-ai/webmcp-bridge)
 ```
 
 If the user is unsure: Bridge when an MCP server exists, Declarative when the
