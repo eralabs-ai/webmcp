@@ -1,7 +1,7 @@
 {
   "name": "webmcp",
   "version": "0.1.0",
-  "description": "Make a website agent-ready with WebMCP: audit agent-readiness, propose page tools, implement them on document.modelContext, and verify them in a real browser.",
+  "description": "Get a website ready for AI agents with WebMCP: audit agent-readiness, propose page tools, implement them on document.modelContext, and verify them in a real browser.",
   "author": { "name": "Ora", "url": "https://github.com/eralabs-ai" },
   "homepage": "https://github.com/eralabs-ai/webmcp",
   "repository": "https://github.com/eralabs-ai/webmcp",
@@ -17,7 +17,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "WebMCP",
-    "shortDescription": "Make a website agent-ready with WebMCP",
+    "shortDescription": "Get a website ready for AI agents with WebMCP",
     "longDescription": "Guides an agent to audit a web app for agent-readiness, propose non-overlapping page tools with the developer, implement them on the standard document.modelContext API (declarative forms, imperative registerTool, or a bridge to an existing MCP server), and verify every tool in a real browser.",
     "developerName": "Ora",
     "category": "Productivity",

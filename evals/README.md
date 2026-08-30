@@ -13,10 +13,13 @@ an LLM judge. `scaffold_script` copies the bookshop fixture
 (`tests/fixtures/bookshop/`) into the scaffold dir so cases run against a
 real site; pass `--scaffold` to enable it.
 
-Status: authored against the shape documented by `claude plugin eval
---help`; not yet executed because the command is still in early access.
-Re-verify field names with `claude plugin eval init --bare` once enabled,
-and adjust if the scaffolded template disagrees.
+Status: CI runs the suite via `.github/workflows/evals.yml` on manual
+dispatch and on PRs touching `skills/`, `evals/`, or `.claude-plugin/`,
+gated on the `ANTHROPIC_API_KEY` repo secret (skipped cleanly when absent,
+e.g. on forks). The account behind the key needs eval early access; until
+that is enabled the run exits with "plugin eval is currently in early
+access". Field names were authored against `claude plugin eval --help`;
+re-verify with `claude plugin eval init --bare` once enabled.
 
 Cases:
 

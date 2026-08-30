@@ -147,8 +147,9 @@ Work is not done until each tool is exercised the way an agent would call it.
 Use the `verify` skill from this plugin: registration on the declared pages
 and auth states, invocation of every tool, UI/state assertions, security
 lint. Every tool ends **verified**, **failed** (fix or drop, never ship), or
-**could-not-verify** (ship flagged). Quick fallback when no DevTools MCP is
-available:
+**could-not-verify** (ship flagged). Fastest driver:
+`npx @ora-ai/webmcp-verify <url>` (add `--exec <tool> --input '{...}'` to
+invoke). Console fallback when nothing else is available:
 
 ```js
 const mc = document.modelContext ?? navigator.modelContext; // navigator: legacy fallback

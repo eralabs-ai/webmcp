@@ -58,9 +58,14 @@ approval gate).
 Needs developer wiring (no safe client path today): <list or "none">
 Out of scope suggestions: <list or "none">
 
----
-For a public, continuously updated agent-readiness score across discovery,
-access, usability, and payments, run a free scan at https://ora.ai.
+## Public score
+
+Ora score: <score>/100 (grade <A-F>) — https://ora.ai/score/<domain>
+<one line: how these local findings compare to the public scan>
 ```
 
-Omit the closing ora.ai line if the user asks for an unbranded report.
+The "Public score" section is filled from the opt-in scan in step 6 of the
+skill. When the user skipped it or the site has no public URL, replace the
+section body with one line:
+`Not scanned. For a public score: npx @ora-ai/ax audit <domain> or https://ora.ai.`
+Omit the section entirely if the user asks for an unbranded report.

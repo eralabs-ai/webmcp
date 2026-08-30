@@ -1,6 +1,6 @@
 # webmcp
 
-Make your website agent-ready with WebMCP.
+Get your website ready for AI agents: audit, implement, verify.
 
 WebMCP lets a web page register typed tools that in-browser AI agents call
 directly. Agents act through your site's own logic instead of scraping the
@@ -9,7 +9,7 @@ skills.sh host) to audit your site, propose the right tools, implement them
 on the standard `document.modelContext` API, and verify them in a real
 browser.
 
-Built by [ora](https://ora.ai), the agent-readiness ranking. No login, no
+Built by [Ora](https://ora.ai), the agent-readiness ranking. No login, no
 hosted service, no telemetry. Your code stays on your machine. Generated
 page tools target only the standard API; the optional bridge strategy uses
 a small MIT library, [`@ora-ai/webmcp-bridge`](packages/webmcp-bridge/README.md).
@@ -46,10 +46,18 @@ Three skills. Each one stops for your approval before touching a file.
 | `audit` | Read-only agent-readiness report: scored findings across find/read/use, fix-first list, proposed tool table. Writes no code |
 | `verify` | Runtime check of existing tools: registration, invocation, security lint. Reports each tool as verified, failed, or could-not-verify |
 
-Plus [`@ora-ai/webmcp-bridge`](packages/webmcp-bridge/README.md): a small
-MIT library that registers your existing remote MCP server's tools on
-`document.modelContext`, for the bridge strategy. Built on the official
-MCP SDK. Generated page tools still need no SDK at all.
+Plus two small MIT packages:
+
+- [`@ora-ai/webmcp-verify`](packages/webmcp-verify/README.md): a CLI that
+  launches your installed Chrome with WebMCP enabled, lists a page's
+  registered tools, lints them, and executes them the way an agent would.
+  `npx @ora-ai/webmcp-verify http://localhost:3000` — no flags, no Canary,
+  no console pasting.
+- [`@ora-ai/webmcp-bridge`](packages/webmcp-bridge/README.md): registers
+  your existing remote MCP server's tools on `document.modelContext`, for
+  the bridge strategy. Built on the official MCP SDK.
+
+Generated page tools still need no SDK at all.
 
 ## Use it
 
@@ -82,8 +90,9 @@ imperative `registerTool`, or a bridge to an MCP server you already run.
 
 - A locally runnable website. Any stack: the skills cover React/Next, Vue,
   Svelte, and vanilla or server-rendered MPAs.
-- For browser verification: Chrome with the WebMCP flag or origin trial,
-  or `@mcp-b/webmcp-polyfill`.
+- For browser verification: Chrome. `npx @ora-ai/webmcp-verify` launches
+  it with the right flags itself; non-Chromium browsers need
+  `@mcp-b/webmcp-polyfill`.
 
 ## Development
 
@@ -103,11 +112,15 @@ imperative `registerTool`, or a bridge to an MCP server you already run.
 - Spec: https://webmachinelearning.github.io/webmcp/
 - Chrome docs: https://developer.chrome.com/docs/ai/webmcp/imperative-api
 
-## About ora
+## About Ora
 
-ora ranks how ready products are to be used by AI agents. WebMCP tools are
+Ora ranks how ready products are to be used by AI agents. WebMCP tools are
 one of the strongest signals in the usability layer. Run a free scan of
-your site at [ora.ai](https://ora.ai).
+your site at [ora.ai](https://ora.ai), or from the terminal:
+`npx @ora-ai/ax audit your-site.com`.
+
+Ora is a product of Era Labs; the GitHub org is
+[eralabs-ai](https://github.com/eralabs-ai).
 
 ## License
 

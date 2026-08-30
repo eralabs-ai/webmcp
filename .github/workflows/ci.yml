@@ -75,6 +75,21 @@ jobs:
       - name: Verify publishable tarball
         working-directory: packages/webmcp-bridge
         run: npm run verify:pack
+      - name: webmcp-verify install
+        working-directory: packages/webmcp-verify
+        run: npm ci
+      - name: webmcp-verify lint
+        working-directory: packages/webmcp-verify
+        run: npm run lint
+      - name: webmcp-verify typecheck (src + tests)
+        working-directory: packages/webmcp-verify
+        run: npm run typecheck
+      - name: webmcp-verify build
+        working-directory: packages/webmcp-verify
+        run: npm run build
+      - name: webmcp-verify tests
+        working-directory: packages/webmcp-verify
+        run: npm test
 
   # Aggregate gate: branch protection on `main` requires a single status
   # check named `ci`. commitlint may be skipped (push events); check may not.

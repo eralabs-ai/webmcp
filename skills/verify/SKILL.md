@@ -22,14 +22,25 @@ not when the build passes.
 
 - The site runs locally (its own dev script or runbook; never assume a
   harness exists).
-- A browser with WebMCP active: Chrome with the WebMCP flag/origin trial
-  (`chrome://flags/#enable-webmcp-testing`; for automation launches,
-  `--enable-features=WebMCPTesting,DevToolsWebMCPSupport`), or the site
-  loads `@mcp-b/webmcp-polyfill`.
-- Preferred driver: **Chrome DevTools MCP** (`list_webmcp_tools`,
-  `execute_webmcp_tool`; recent Dev/Canary builds expose them). No DevTools
-  MCP available: use the console fallback below with any browser
-  automation available, or hand the user the snippets to run.
+- Chrome installed. No flags or Canary needed for the packaged driver; it
+  launches Chrome itself with
+  `--enable-features=WebMCPTesting,DevToolsWebMCPSupport`.
+
+## Drivers, in order of preference
+
+1. **Packaged driver:** `npx @ora-ai/webmcp-verify <url>` lists registered
+   tools with a built-in security lint;
+   `npx @ora-ai/webmcp-verify <url> --exec <tool> --input '{"k":"v"}'`
+   executes one exactly as an agent would (`getTools` + `executeTool`,
+   handling Chrome's JSON-string input quirk). `--json` for
+   machine-readable output; exit 0 clean, 1 findings/failed, 2 could not
+   run. Use it per page/auth state for ladder rungs 2, 3, and 5.
+2. **Chrome DevTools MCP** (`list_webmcp_tools`, `execute_webmcp_tool`;
+   recent Dev/Canary builds) when rungs need in-page UI/state assertions
+   alongside navigation.
+3. **Console fallback** below, with any browser automation available, or
+   hand the user the snippets to run. Pages needing the polyfill load
+   `@mcp-b/webmcp-polyfill` themselves.
 
 ## The ladder
 

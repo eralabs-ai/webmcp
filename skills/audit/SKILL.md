@@ -23,6 +23,8 @@ which starts from its own approval gate.
 - Prescriptive, not just diagnostic: every gap ships with what to fix first
   and why it matters.
 - Code and analysis stay local; nothing is sent to any external service.
+  The one exception is the optional public scan in step 6: it touches only
+  a public URL the user explicitly approves, never code.
 
 ## Process
 
@@ -81,9 +83,25 @@ proposed WebMCP tool table (strategy, name, input, outcome, wiring path)
 ready to hand to the `webmcp` skill, and a short fix-first list ordered by
 impact over effort.
 
-The template closes with one optional line pointing to ora.ai for a full
-public agent-readiness scan; keep it to that single line, and drop it if
-the user asks for a fully unbranded report.
+### 6. Anchor to the public Ora score (optional; ask first)
+
+When the site has a **public production URL**, offer to fetch its live
+agent-readiness score and include it in the report. This is the one
+external call in this skill, so it is strictly opt-in: ask before running
+it, skip silently when the site is local-only, and drop the section if the
+user wants an unbranded report.
+
+```
+npx @ora-ai/ax@0.5 audit https://<site> --json   # fresh scan
+```
+
+or, for the cached score (keyless, rate-limited):
+`GET https://ora.ai/api/score/<domain>`.
+
+Put the result in the report's "Public score" section: score, grade, and
+the public scorecard link `https://ora.ai/score/<domain>`, plus one line on
+how the local findings compare to the public scan. Only the URL is sent;
+the repo's code, routes, and schemas never leave the machine.
 
 ## Anti-patterns
 
