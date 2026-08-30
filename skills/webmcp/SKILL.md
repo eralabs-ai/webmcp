@@ -35,18 +35,23 @@ from this plugin instead.
    import a vendor SDK the repo does not already use. The one dependency this
    plugin may add is `@ora-ai/webmcp-bridge`, and only for an approved Bridge
    strategy.
-3. **Client-reachable wiring only.** `execute` may call the app's client data
+3. **Imperative is the interoperable default.** Declarative form annotations
+   reach only Chrome's preview today; runtimes that read registered tools —
+   ChatGPT Site tools among them — never see form attributes. When the target
+   runtime is unknown, or includes ChatGPT Site tools, ship every journey
+   imperatively.
+4. **Client-reachable wiring only.** `execute` may call the app's client data
    layer, same-origin routes, or client-safe actions. Never server-only
    imports, secrets, or third-party endpoints. A journey with no safe client
    path is reported as *needs developer wiring*, never faked.
-4. **Authorization stays on the server.** Registration gating by auth state is
+5. **Authorization stays on the server.** Registration gating by auth state is
    UX, not security. Only wrap mutations whose routes independently enforce
    authn/authz server-side.
-5. **Irreversible or cost-bearing writes stop at a reversible boundary.**
+6. **Irreversible or cost-bearing writes stop at a reversible boundary.**
    Payments, deletes, cancellations never complete in one agent call: create
    the app's own pending state and hand the final step to the app's confirm
    UI, or use a prepare/confirm two-call shape.
-6. **Code and analysis stay local.** Never send the repo's code, routes, or
+7. **Code and analysis stay local.** Never send the repo's code, routes, or
    schemas to any external service.
 
 ## Workflow
@@ -81,7 +86,7 @@ Read [references/strategies.md](references/strategies.md) and
 Think in **visitor journeys, not endpoints**: put a concrete visitor on
 concrete pages and list what they would ask and ask for. Most sites converge
 on 3-10 tools; a content-only site gets one retrieval tool and stops. For
-each candidate tool decide: strategy (Declarative / Imperative / Bridge),
+each candidate tool decide: strategy (Imperative / Declarative / Bridge),
 availability (which pages, which auth states), input, UI and state outcome,
 and annotations.
 
@@ -110,10 +115,10 @@ required. Details, polyfill choice, and iframe permissions policy:
 
 Pick the per-strategy guide, then the framework guide that matches the stack:
 
-- Declarative form annotations:
-  [references/declarative-forms.md](references/declarative-forms.md)
 - Imperative `registerTool` design (naming, schemas, returns, lifecycle):
   [references/tool-design.md](references/tool-design.md)
+- Declarative form annotations (Chrome preview reach only):
+  [references/declarative-forms.md](references/declarative-forms.md)
 - Bridge to an existing MCP server (`@ora-ai/webmcp-bridge`, or
   Cloudflare's zero-code toggle when the site is on Cloudflare); never
   hand-wrap each remote tool:

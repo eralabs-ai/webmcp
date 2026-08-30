@@ -78,7 +78,7 @@ auth state once and settle everything for that page in one pass.
 ## Console fallback
 
 ```js
-const mc = document.modelContext ?? navigator.modelContext; // navigator: legacy fallback
+const mc = document.modelContext;
 const tools = await mc.getTools();
 console.table(tools.map((t) => ({ name: t.name, description: t.description })));
 

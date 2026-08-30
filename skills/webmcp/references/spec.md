@@ -115,8 +115,8 @@ form.addEventListener("submit", (event) => {
 });
 ```
 
-Events: `toolactivated` (agent pre-filled fields) and `toolcancel` (user
-cancelled / `reset()`).
+Events: `toolactivated` (agent pre-filled fields) and `toolcanceled` (user
+cancelled / `reset()`; note the spec's single-l spelling).
 CSS state: `form:tool-form-active`, submit control `:tool-submit-active`.
 
 ## Registration failure taxonomy

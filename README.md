@@ -38,7 +38,9 @@ npx skills add eralabs-ai/webmcp
 
 ## What you get
 
-Three skills. Each one stops for your approval before touching a file.
+Three skills. `webmcp` stops for your approval before touching any file;
+`audit` writes one report (`webmcp-audit.md`) and no code; `verify` changes
+nothing.
 
 | Skill | What it does |
 | --- | --- |
@@ -68,8 +70,11 @@ Generated page tools still need no SDK at all.
 ```
 
 The plan comes first. You approve which journeys become tools, then the
-agent implements against the standard API: declarative form annotations,
-imperative `registerTool`, or a bridge to an MCP server you already run.
+agent implements against the standard API: imperative `registerTool` tools
+(the default — every WebMCP runtime reads them), declarative form
+annotations (Chrome preview only; runtimes that read registered tools, such
+as ChatGPT Site tools, never see them), or a bridge to an MCP server you
+already run.
 
 ## Principles
 

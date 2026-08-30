@@ -1,7 +1,7 @@
 // Contextual tool for the book page: bakes the viewed book into the
 // registration (no bookId parameter) and registers only while in stock.
 const ctx = JSON.parse(document.getElementById("webmcp-context")?.textContent ?? "{}");
-const mc = document.modelContext ?? navigator.modelContext ?? null; // navigator: legacy (pre-Chrome-150) fallback
+const mc = document.modelContext ?? null;
 
 const cartCount = document.getElementById("cart-count");
 const addButton = document.getElementById("add-to-cart");
@@ -31,7 +31,8 @@ if (mc?.registerTool && ctx.bookId && ctx.inStock) {
           additionalProperties: false,
         },
         annotations: { readOnlyHint: false, untrustedContentHint: false },
-        async execute({ quantity }) {
+        async execute({ quantity }, { signal } = {}) {
+          signal?.throwIfAborted();
           if (!Number.isInteger(quantity) || quantity < 1) {
             throw new Error("quantity must be a positive integer.");
           }

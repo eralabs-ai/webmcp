@@ -175,6 +175,29 @@ describe("createWebMcpBridge", () => {
     await bridge.close();
   });
 
+  it("refuses non-text MCP content instead of leaking the envelope", async () => {
+    const server = new McpServer({ name: "test-server", version: "1.0.0" });
+    server.registerTool(
+      "get_chart",
+      { description: "Returns an image." },
+      async () => ({
+        content: [
+          { type: "text", text: "here you go" },
+          { type: "image", data: "aGk=", mimeType: "image/png" },
+        ],
+      }),
+    );
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const { mc, tools } = fakeModelContext();
+    const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
+
+    await expect(tools.get("get_chart")!.execute({})).rejects.toThrow(
+      /non-text content \(image\)/,
+    );
+    await bridge.close();
+  });
+
   it("sanitizes MCP tool names that are illegal in WebMCP", async () => {
     const server = new McpServer({ name: "test-server", version: "1.0.0" });
     server.registerTool(

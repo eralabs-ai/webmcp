@@ -59,7 +59,8 @@ useWebMCPTool(
       required: ["quantity"],
       additionalProperties: false,
     },
-    async execute({ quantity }) {
+    async execute({ quantity }, { signal }) {
+      signal?.throwIfAborted();
       const cart = await product.addToCart(route.params.id, quantity);
       return { added: quantity, cartCount: cart.count };
     },

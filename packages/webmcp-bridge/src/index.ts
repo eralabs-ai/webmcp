@@ -95,11 +95,17 @@ function toResult(result: CallToolResult, toolName: string): unknown {
   if (result.structuredContent !== undefined) return result.structuredContent;
   const content = result.content ?? [];
   // Text-only results reach the agent as plain text; the raw MCP
-  // content-block envelope is not a WebMCP shape.
-  if (content.length > 0 && content.every((block) => block.type === "text")) {
+  // content-block envelope is not a WebMCP shape, so non-text blocks are
+  // refused rather than leaked.
+  if (content.every((block) => block.type === "text")) {
     return content.map((block) => block.text).join("\n");
   }
-  return content;
+  const types = [...new Set(content.filter((b) => b.type !== "text").map((b) => b.type))];
+  throw new Error(
+    `${toolName} returned non-text content (${types.join(", ")}) that has no ` +
+      "WebMCP result shape. Add structuredContent on the MCP server or " +
+      'exclude this tool via the bridge\'s "exclude" option.',
+  );
 }
 
 /** WebMCP tool names: ASCII [a-zA-Z0-9_.-], 1-128 chars, unique per page. */

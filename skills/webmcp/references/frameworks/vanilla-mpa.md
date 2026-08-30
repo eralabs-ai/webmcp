@@ -39,7 +39,7 @@ build. Check the site's CSP allows same-origin module scripts.
 
 ```js
 // /js/webmcp/site-tools.js
-const mc = document.modelContext ?? navigator.modelContext ?? null; // navigator: legacy (pre-Chrome-150) fallback
+const mc = document.modelContext ?? null;
 
 if (mc?.registerTool) {
   const controller = new AbortController();
