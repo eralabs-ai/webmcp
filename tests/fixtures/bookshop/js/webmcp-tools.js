@@ -2,7 +2,7 @@
 // navigation, so each page re-registers). Follows the plugin's own rules:
 // feature detection, awaited registration in try/catch, honest annotations,
 // empty results carry a note, JSON-serializable returns.
-const mc = document.modelContext ?? navigator.modelContext ?? null;
+const mc = document.modelContext ?? navigator.modelContext ?? null; // navigator: legacy (pre-Chrome-150) fallback
 
 if (mc?.registerTool) {
   const controller = new AbortController();

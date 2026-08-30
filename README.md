@@ -9,8 +9,10 @@ skills.sh host) to audit your site, propose the right tools, implement them
 on the standard `document.modelContext` API, and verify them in a real
 browser.
 
-Built by [ora](https://ora.ai), the agent-readiness ranking. No SDK, no
-login, no hosted service. Your code stays on your machine.
+Built by [ora](https://ora.ai), the agent-readiness ranking. No login, no
+hosted service, no telemetry. Your code stays on your machine. Generated
+page tools target only the standard API; the optional bridge strategy uses
+a small MIT library, [`@ora-ai/webmcp-bridge`](packages/webmcp-bridge/README.md).
 
 ## Install
 
@@ -25,6 +27,7 @@ login, no hosted service. Your code stays on your machine.
 
 ```
 codex plugin marketplace add eralabs-ai/webmcp
+codex plugin add webmcp
 ```
 
 **Cursor / skills.sh**
@@ -63,7 +66,9 @@ imperative `registerTool`, or a bridge to an MCP server you already run.
 ## Principles
 
 - **Standard API only.** Generated code targets `document.modelContext`
-  with feature detection and graceful no-op. No vendor SDK, ever.
+  with feature detection and graceful no-op — no SDK required. The one
+  library this plugin may add is `@ora-ai/webmcp-bridge`, only for the
+  opt-in bridge strategy (mirroring an MCP server you already run).
 - **Journeys, not endpoints.** Tools map to what a visitor asks and asks
   for. Most sites need 3 to 10 tools. A blog needs 1.
 - **Approval before implementation.** Tool selection is a product decision.

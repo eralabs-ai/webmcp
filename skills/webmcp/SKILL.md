@@ -32,7 +32,9 @@ from this plugin instead.
    yes. Skipping the gate is the primary failure mode of this workflow.
 2. **Standard API only.** Generated code targets `document.modelContext` with
    feature detection and graceful no-op. Never invent a wrapper SDK; never
-   import a vendor SDK the repo does not already use.
+   import a vendor SDK the repo does not already use. The one dependency this
+   plugin may add is `@ora-ai/webmcp-bridge`, and only for an approved Bridge
+   strategy.
 3. **Client-reachable wiring only.** `execute` may call the app's client data
    layer, same-origin routes, or client-safe actions. Never server-only
    imports, secrets, or third-party endpoints. A journey with no safe client
@@ -149,9 +151,10 @@ lint. Every tool ends **verified**, **failed** (fix or drop, never ship), or
 available:
 
 ```js
-const mc = document.modelContext ?? navigator.modelContext;
+const mc = document.modelContext ?? navigator.modelContext; // navigator: legacy fallback
 const tools = await mc.getTools();
-await mc.executeTool(tools.find(t => t.name === "search_docs"), { query: "x" });
+const raw = await mc.executeTool(tools.find(t => t.name === "search_docs"), { query: "x" });
+JSON.parse(raw); // executeTool resolves to a JSON string, not an object
 ```
 
 ### 6. Harden
@@ -168,12 +171,21 @@ never listing origins the site does not control.
 Make this site agent-ready?
 ├─ Propose journeys with the user first (never skip)
 ├─ Real HTML <form>s that should stay forms?      -> Declarative attributes
+│                                                    (Chrome preview only)
 ├─ Packaged scenario (tunnel, store update, nav)? -> Imperative registerTool
 └─ Existing remote MCP server with right tools?   -> Bridge (@ora-ai/webmcp-bridge)
 ```
 
-If the user is unsure: Bridge when an MCP server exists, Declarative when the
-site is form-heavy, Imperative for the one high-value journey they care about.
+**Runtime reach check before choosing Declarative:** form attributes ship
+only in Chrome's origin trial today (the spec's declarative section is a
+TODO), and agent runtimes that read only imperatively registered tools never
+see them. When the user targets such a runtime, or the target runtime is
+unknown, ship the journey with imperative `registerTool` instead — never as
+declarative-only.
+
+If the user is unsure: Bridge when an MCP server exists, otherwise
+Imperative for the high-value journeys; Declarative when the site is
+form-heavy **and** Chrome-preview reach is acceptable.
 
 ## Anti-patterns
 

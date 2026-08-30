@@ -14,6 +14,11 @@ WebMCP ignore the attributes entirely.
 booking steps that are real `<form>`s) and visible fill-in is the desired
 UX. Fastest strategy, zero JS, works on MPAs with no bundler.
 
+**Reach:** Chrome origin trial only today; the spec's declarative section is
+a TODO, and agent runtimes that read only imperatively registered tools do
+not see form attributes. If the user targets such a runtime, or the target
+runtime is unknown, ship the journey imperatively instead.
+
 **Not a fit:** click-handler "forms" with no `<form>` element, or multi-step
 tunnels that should collapse into one agent call.
 

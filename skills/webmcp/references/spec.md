@@ -65,7 +65,9 @@ Promise<DOMString> executeTool(RegisteredTool tool, optional object input, optio
 
 `getTools()` sees registered tools across the document tree (subject to
 origin exposure). `executeTool()` lets the page (or a console/test harness)
-invoke a tool exactly as an agent would; use it for verification.
+invoke a tool exactly as an agent would; use it for verification. It
+resolves to a **DOMString** — the `execute` return value serialized as
+JSON — so parse it before asserting on fields.
 
 ## Events
 

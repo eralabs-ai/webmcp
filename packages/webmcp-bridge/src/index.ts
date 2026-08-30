@@ -92,7 +92,34 @@ function toResult(result: CallToolResult, toolName: string): unknown {
       .join("\n");
     throw new Error(text || `${toolName} failed on the MCP server.`);
   }
-  return result.structuredContent ?? result.content ?? [];
+  if (result.structuredContent !== undefined) return result.structuredContent;
+  const content = result.content ?? [];
+  // Text-only results reach the agent as plain text; the raw MCP
+  // content-block envelope is not a WebMCP shape.
+  if (content.length > 0 && content.every((block) => block.type === "text")) {
+    return content.map((block) => block.text).join("\n");
+  }
+  return content;
+}
+
+/** WebMCP tool names: ASCII [a-zA-Z0-9_.-], 1-128 chars, unique per page. */
+function toWebMcpName(raw: string, taken: ReadonlySet<string>): string {
+  const base = raw.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 128) || "tool";
+  if (!taken.has(base)) return base;
+  for (let i = 2; ; i++) {
+    const suffix = `_${i}`;
+    const candidate = base.slice(0, 128 - suffix.length) + suffix;
+    if (!taken.has(candidate)) return candidate;
+  }
+}
+
+/** WebMCP requires a non-empty description; MCP does not. */
+function toWebMcpDescription(tool: Tool): string {
+  return (
+    tool.description?.trim() ||
+    tool.title?.trim() ||
+    `Bridged from the MCP server tool "${tool.name}".`
+  );
 }
 
 function toDescriptor(
@@ -102,7 +129,7 @@ function toDescriptor(
 ): ModelContextTool {
   return {
     name: registeredName,
-    description: tool.description ?? "",
+    description: toWebMcpDescription(tool),
     ...(tool.title ? { title: tool.title } : {}),
     ...(tool.inputSchema
       ? { inputSchema: tool.inputSchema as Record<string, unknown> }
@@ -163,7 +190,10 @@ export async function createWebMcpBridge(
   let closed = false;
 
   async function register(tool: Tool): Promise<void> {
-    const name = `${prefix}${tool.name}`;
+    const taken = new Set(
+      [...registered.values()].map((entry) => entry.bridged.name),
+    );
+    const name = toWebMcpName(`${prefix}${tool.name}`, taken);
     const controller = new AbortController();
     try {
       await mc!.registerTool(toDescriptor(client, tool, name), {
@@ -176,7 +206,7 @@ export async function createWebMcpBridge(
       registered.set(tool.name, {
         controller,
         signature: signatureOf(tool),
-        bridged: { name, remoteName: tool.name, description: tool.description ?? "" },
+        bridged: { name, remoteName: tool.name, description: toWebMcpDescription(tool) },
       });
     } catch (error) {
       controller.abort();
