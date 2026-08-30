@@ -5,8 +5,9 @@
 //   node scripts/check.mjs
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = resolve(dirname(new URL(import.meta.url).pathname), "..");
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
 const fail = (msg) => errors.push(msg);
 

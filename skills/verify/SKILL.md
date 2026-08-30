@@ -23,8 +23,9 @@ not when the build passes.
 - The site runs locally (its own dev script or runbook; never assume a
   harness exists).
 - A browser with WebMCP active: Chrome with the WebMCP flag/origin trial
-  (`--enable-features=WebMCP`), or the site loads
-  `@mcp-b/webmcp-polyfill`.
+  (`chrome://flags/#enable-webmcp-testing`; for automation launches,
+  `--enable-features=WebMCPTesting,DevToolsWebMCPSupport`), or the site
+  loads `@mcp-b/webmcp-polyfill`.
 - Preferred driver: **Chrome DevTools MCP** (`list_webmcp_tools`,
   `execute_webmcp_tool`; recent Dev/Canary builds expose them). No DevTools
   MCP available: use the console fallback below with any browser

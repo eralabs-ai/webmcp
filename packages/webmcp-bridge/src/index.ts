@@ -170,6 +170,10 @@ export async function createWebMcpBridge(
       await mc!.registerTool(toDescriptor(client, tool, name), {
         signal: controller.signal,
       });
+      if (closed) {
+        controller.abort();
+        return;
+      }
       registered.set(tool.name, {
         controller,
         signature: signatureOf(tool),
@@ -204,15 +208,24 @@ export async function createWebMcpBridge(
     }
   }
 
+  // Serialize syncs: notification handlers fire concurrently, and two
+  // interleaved syncs would race on the shared registration map.
+  let syncChain: Promise<void> = Promise.resolve();
+  function scheduleSync(): Promise<void> {
+    const run = syncChain.then(sync);
+    syncChain = run.catch(() => {});
+    return run;
+  }
+
   if (options.followListChanges !== false) {
     client.setNotificationHandler(ToolListChangedNotificationSchema, () => {
-      void sync().catch((error) =>
+      void scheduleSync().catch((error) =>
         console.warn(`${TAG} re-sync after tools/list_changed failed:`, error),
       );
     });
   }
 
-  await sync();
+  await scheduleSync();
 
   return {
     get tools() {
