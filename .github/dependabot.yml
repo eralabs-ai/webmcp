@@ -38,6 +38,34 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # typescript-eslint does not yet accept TS 7 as a peer; majors here
+      # break npm ci until the ecosystem catches up.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
+
+  # The published verify CLI package. Same policy as the bridge.
+  - package-ecosystem: npm
+    directory: "/packages/webmcp-verify"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      dev-minor-patch:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
 
   # Keeps the SHA-pinned actions in .github/workflows current. Pinning without
   # this is how a workflow quietly rots on an unmaintained action version.
