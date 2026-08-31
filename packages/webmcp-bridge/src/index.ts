@@ -84,13 +84,15 @@ function selectTools(tools: Tool[], options: WebMcpBridgeOptions): Tool[] {
   return selected;
 }
 
+// Failures are returned as { error }, never thrown: the spec maps a
+// rejected execute to a bare UnknownError and discards the message.
 function toResult(result: CallToolResult, toolName: string): unknown {
   if (result.isError) {
     const text = (result.content ?? [])
       .map((block) => ("text" in block ? block.text : ""))
       .filter(Boolean)
       .join("\n");
-    throw new Error(text || `${toolName} failed on the MCP server.`);
+    return { error: text || `${toolName} failed on the MCP server.` };
   }
   if (result.structuredContent !== undefined) return result.structuredContent;
   const content = result.content ?? [];
@@ -101,11 +103,12 @@ function toResult(result: CallToolResult, toolName: string): unknown {
     return content.map((block) => block.text).join("\n");
   }
   const types = [...new Set(content.filter((b) => b.type !== "text").map((b) => b.type))];
-  throw new Error(
-    `${toolName} returned non-text content (${types.join(", ")}) that has no ` +
+  return {
+    error:
+      `${toolName} returned non-text content (${types.join(", ")}) that has no ` +
       "WebMCP result shape. Add structuredContent on the MCP server or " +
       'exclude this tool via the bridge\'s "exclude" option.',
-  );
+  };
 }
 
 /** WebMCP tool names: ASCII [a-zA-Z0-9_.-], 1-128 chars, unique per page. */

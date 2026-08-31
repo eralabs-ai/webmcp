@@ -12,6 +12,9 @@ forward whenever this file is re-verified against the current draft.
 
 - **`document.modelContext`** returns the `ModelContext` object. This is the
   only surface in the spec. It is `SecureContext`-gated: HTTPS or localhost.
+- The document's agent cluster must be **origin-keyed**: setting
+  `document.domain` or serving `Origin-Agent-Cluster: ?0` makes
+  `registerTool()` and `getTools()` reject with `SecurityError`.
 - **`navigator.modelContext` is not in the spec.** Chrome ≤149 previews and
   some older polyfills exposed it; Chrome 150 moved the getter to `document`
   (version table below). New code detects `document` only:
@@ -39,7 +42,7 @@ Tool descriptor:
 | --- | --- | --- |
 | `name` | yes | 1-128 chars, ASCII `[a-zA-Z0-9_.-]` only, unique; duplicate name **rejects the registration promise** |
 | `description` | yes | non-empty; what it does, when to use it, what it returns |
-| `execute` | yes | `async (input, { signal }) => any`; return must survive `JSON.stringify` |
+| `execute` | yes | `async (input, { signal }) => any`; return must survive `JSON.stringify`. A rejection reaches the agent as a bare `UnknownError` DOMException (message discarded) — fail by returning `{ error }` instead; reject only for cancellation |
 | `title` | no | human-readable label |
 | `inputSchema` | no | JSON Schema object; use `type: "object"`, describe every property, set `additionalProperties: false` |
 | `annotations` | no | `{ readOnlyHint?: boolean, untrustedContentHint?: boolean }` |
@@ -113,7 +116,9 @@ form.addEventListener("submit", (event) => {
 ```
 
 Events: `toolactivated` (agent pre-filled fields) and `toolcanceled` (user
-cancelled / `reset()`; note the spec's single-l spelling).
+cancelled / `reset()`; note the single-l spelling). These are proposed in
+spec issue #146 and are not yet in the draft IDL; treat them as
+Chrome-preview behavior and feature-detect before relying on them.
 CSS state: `form:tool-form-active`, submit control `:tool-submit-active`.
 
 ## Registration failure taxonomy
@@ -126,7 +131,7 @@ synchronously, and the same `await` + `catch` handles both:
 | --- | --- |
 | `InvalidStateError` | duplicate name; empty `name`/`description`; name over 128 chars or outside `[a-zA-Z0-9_.-]` |
 | `NotAllowedError` | `"tools"` Permissions Policy denied (cross-origin iframe missing `allow="tools"`) |
-| `SecurityError` | `exposedTo` lists an untrusted origin (non-secure / not potentially trustworthy) |
+| `SecurityError` | `exposedTo` lists an untrusted origin (non-secure / not potentially trustworthy); or the document is not origin-keyed (`document.domain` set, or `Origin-Agent-Cluster: ?0`) — `getTools()` rejects the same way |
 | `TypeError` / serialization errors | non-JSON-serializable or circular `inputSchema` |
 
 ## Chrome preview timeline (verify before promising)

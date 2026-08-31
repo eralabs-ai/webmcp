@@ -31,10 +31,10 @@ if (mc?.registerTool && ctx.bookId && ctx.inStock) {
           additionalProperties: false,
         },
         annotations: { readOnlyHint: false, untrustedContentHint: false },
-        async execute({ quantity }, { signal } = {}) {
-          signal?.throwIfAborted();
+        async execute({ quantity }, { signal }) {
+          signal.throwIfAborted();
           if (!Number.isInteger(quantity) || quantity < 1) {
-            throw new Error("quantity must be a positive integer.");
+            return { error: "quantity must be a positive integer." };
           }
           const count = addToCart(quantity);
           return { added: quantity, cartCount: count, bookId: ctx.bookId };

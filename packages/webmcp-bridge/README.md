@@ -60,8 +60,9 @@ useWebMcpBridge({ url: "https://mcp.example.com/mcp" });
   generated line.
 - Results unwrap for agents: `structuredContent` when the server sends it,
   otherwise text-only `content` joins to a plain string; MCP error results
-  (`isError: true`) throw, so agents get an actionable failure instead of a
-  fake success.
+  (`isError: true`) come back as `{ error }` payloads, so agents get an
+  actionable failure — a thrown error would reach them as a bare
+  `UnknownError` with the message discarded.
 - Browsers without WebMCP get a console warning and an inert bridge; the
   page keeps working.
 

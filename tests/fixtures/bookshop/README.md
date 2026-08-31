@@ -43,6 +43,6 @@ use Chrome with `chrome://flags/#enable-webmcp-testing`; otherwise load
   in `#results` on index.html (UI effect).
 - `add_to_cart`: registered on book.html only, absent on index.html;
   invocation with `{"quantity": 2}` bumps `#cart-count` and returns the
-  new count; `{"quantity": 0}` throws an actionable error.
+  new count; `{"quantity": 0}` returns an actionable `{ error }` result.
 - Security lint: both descriptions clean, `readOnlyHint` honest, no
   `toolautosubmit` on anything destructive (nothing destructive exists).

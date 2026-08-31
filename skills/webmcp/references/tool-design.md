@@ -16,8 +16,8 @@ their strength alone.
 | Availability | cart pages, any auth state; aborts when cart empties |
 | Boundary | payment itself stays in the app's confirm UI |
 
-Cap the first ship at the smallest set of journey tools (often 1-3); simple
-leftover forms belong to Declarative, breadth to Bridge.
+Cap the first ship at the smallest set of journey tools (often 1-3);
+breadth belongs to Bridge when an MCP server already exists.
 
 ## Availability: registration is per document
 
@@ -68,18 +68,22 @@ metadata is a prompt-injection surface the site controls.
 - Accept natural phrasing where possible (a date range as a string beats
   forcing the model to precompute timestamps)
 - `required` only for truly required fields
-- Schema is a hint: validate again inside `execute` and throw actionable
-  errors so the agent can correct and retry
+- Schema is a hint: validate again inside `execute` and return actionable
+  `{ error }` results so the agent can correct and retry
 
 ## execute contract
 
 - Runs the approved wiring path verbatim: client data layer, same-origin
   route, or client-safe action
 - Honors `{ signal }`: pass it to `fetch` and cancelable work
-- Throws on failure and on missing anchors or data it depends on
+- Fails by **returning** `{ error: "actionable message" }` — bad input,
+  failed calls, missing anchors or data it depends on. Never throw for
+  failure: the spec maps a rejected `execute` to a bare `UnknownError`
+  DOMException and discards the message. Rejection is for cancellation
+  only (`signal.throwIfAborted()`)
 - A read that finds nothing is not a failure: return the empty result plus
   an explicit note field ("no matching products"), never a bare `[]` and
-  never a throw
+  never an `{ error }`
 - Returns small, structured, `JSON.stringify`-safe payloads: enough to
   complete the step and choose the next action, never a full entity dump,
   never just "done". No DOM nodes, class instances, cycles, or `undefined`

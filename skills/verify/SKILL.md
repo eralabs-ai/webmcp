@@ -100,7 +100,7 @@ exactly as an agent would drive it from any console or automation harness.
 | Tool missing after navigation | aborted on unmount without re-register on the new page/route |
 | Tool targets the wrong entity | contextual tool not re-registered on param change |
 | Duplicate-name rejection | re-registered without aborting the previous controller |
-| Execute error | input schema mismatch, throw inside `execute` |
+| Execute error | input schema mismatch; a bare `UnknownError` means `execute` rejected — the tool should return `{ error }` instead |
 | Null/failed result | non-JSON-serializable return or rejected promise |
 
 ## Report

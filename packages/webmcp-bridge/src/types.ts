@@ -1,9 +1,14 @@
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
-/** WebMCP tool execute options per the spec: execution-scoped abort signal. */
+/**
+ * WebMCP tool execute options per the spec: `signal` is required
+ * (`required AbortSignal signal` in the IDL). Pre-153 Chrome previews may
+ * still invoke `execute` without options, hence the optional parameter on
+ * `ModelContextTool.execute`.
+ */
 export interface ModelContextExecuteOptions {
-  signal?: AbortSignal;
+  signal: AbortSignal;
 }
 
 /** WebMCP tool descriptor per https://webmachinelearning.github.io/webmcp/ */

@@ -65,7 +65,9 @@ form:tool-form-active { outline: 2px solid highlight; }
 ```
 
 Listen for `toolactivated` / `toolcanceled` when the app should react (for
-example, expanding a collapsed form the agent just filled).
+example, expanding a collapsed form the agent just filled). Both events are
+proposed in spec issue #146, not yet in the draft IDL — Chrome-preview
+behavior; never make correctness depend on them.
 
 ## Done when
 
