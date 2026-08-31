@@ -12,18 +12,15 @@ forward whenever this file is re-verified against the current draft.
 
 - **`document.modelContext`** returns the `ModelContext` object. This is the
   only surface in the spec. It is `SecureContext`-gated: HTTPS or localhost.
-- **`navigator.modelContext` is not in the spec.** Older implementations and
-  some polyfills still expose it. Feature-detect in this order:
+- **`navigator.modelContext` is not in the spec.** Chrome ≤149 previews and
+  some older polyfills exposed it; Chrome 150 moved the getter to `document`
+  (version table below). New code detects `document` only:
 
 ```js
 function getModelContext() {
-  if (typeof document !== "undefined" && document.modelContext) {
-    return document.modelContext;
-  }
-  if (typeof navigator !== "undefined" && navigator.modelContext) {
-    return navigator.modelContext; // legacy implementations only
-  }
-  return null;
+  return typeof document !== "undefined"
+    ? (document.modelContext ?? null)
+    : null;
 }
 ```
 
@@ -153,7 +150,7 @@ third-party READMEs, including this table.
 
 | Seen in the wild | Status |
 | --- | --- |
-| `navigator.modelContext` as primary surface | deprecated; use `document.modelContext` first |
+| `navigator.modelContext` as primary surface | deprecated; new code reads `document.modelContext` only |
 | `unregisterTool(name)` | removed; abort the registration signal |
 | `provideContext()` / `clearContext()` / `toolparamtitle` | removed |
 | synchronous `registerTool()` examples with no `await` | works only on old previews; always `await` |

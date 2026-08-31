@@ -83,7 +83,9 @@ const tools = await mc.getTools();
 console.table(tools.map((t) => ({ name: t.name, description: t.description })));
 
 const tool = tools.find((t) => t.name === "search_docs");
-const raw = await mc.executeTool(tool, { query: "webmcp" });
+let raw;
+try { raw = await mc.executeTool(tool, { query: "webmcp" }); } // spec shape: object
+catch { raw = await mc.executeTool(tool, JSON.stringify({ query: "webmcp" })); } // current Chrome parses only a JSON string
 console.log(JSON.parse(raw)); // executeTool resolves to a JSON string, not an object
 ```
 

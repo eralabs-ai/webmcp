@@ -16,8 +16,8 @@ directly, so agents act through the site's own logic instead of scraping the
 DOM. It is not a remote MCP server and not a ChatGPT/Claude MCP App.
 
 Canonical surface: `document.modelContext.registerTool(...)` (the only surface
-in the current spec). `navigator.modelContext` exists only in older
-implementations; feature-detect `document` first. Declarative surface: HTML
+in the current spec). `navigator.modelContext` is a deprecated Chrome ≤149
+legacy surface; new code detects `document` only. Declarative surface: HTML
 `<form>` attributes (`toolname`, `tooldescription`), currently a Chrome origin
 trial. Exact API contract: [references/spec.md](references/spec.md).
 
@@ -157,9 +157,12 @@ lint. Every tool ends **verified**, **failed** (fix or drop, never ship), or
 invoke). Console fallback when nothing else is available:
 
 ```js
-const mc = document.modelContext ?? navigator.modelContext; // navigator: legacy fallback
+const mc = document.modelContext;
 const tools = await mc.getTools();
-const raw = await mc.executeTool(tools.find(t => t.name === "search_docs"), { query: "x" });
+const tool = tools.find(t => t.name === "search_docs");
+let raw;
+try { raw = await mc.executeTool(tool, { query: "x" }); } // spec shape: object
+catch { raw = await mc.executeTool(tool, JSON.stringify({ query: "x" })); } // current Chrome parses only a JSON string
 JSON.parse(raw); // executeTool resolves to a JSON string, not an object
 ```
 
@@ -176,10 +179,10 @@ never listing origins the site does not control.
 ```
 Make this site agent-ready?
 ├─ Propose journeys with the user first (never skip)
-├─ Real HTML <form>s that should stay forms?      -> Declarative attributes
-│                                                    (Chrome preview only)
-├─ Packaged scenario (tunnel, store update, nav)? -> Imperative registerTool
-└─ Existing remote MCP server with right tools?   -> Bridge (@ora-ai/webmcp-bridge)
+├─ Default: unknown runtime, or ChatGPT Site tools -> Imperative registerTool
+├─ Existing remote MCP server with right tools?    -> Bridge (@ora-ai/webmcp-bridge)
+└─ Real HTML <form>s AND the user accepts
+   Chrome-preview-only reach?                      -> Declarative attributes (opt-in)
 ```
 
 **Runtime reach check before choosing Declarative:** form attributes ship
@@ -189,9 +192,10 @@ see them. When the user targets such a runtime, or the target runtime is
 unknown, ship the journey with imperative `registerTool` instead — never as
 declarative-only.
 
-If the user is unsure: Bridge when an MCP server exists, otherwise
-Imperative for the high-value journeys; Declarative when the site is
-form-heavy **and** Chrome-preview reach is acceptable.
+If the user is unsure: Imperative for the high-value journeys. Bridge only
+when an MCP server already exists and its tools match the journeys.
+Declarative only when the site is form-heavy **and** the user has accepted
+Chrome-preview-only reach.
 
 ## Anti-patterns
 
