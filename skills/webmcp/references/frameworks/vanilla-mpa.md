@@ -67,7 +67,7 @@ if (mc?.registerTool) {
       },
     },
     { signal: controller.signal },
-  );
+  ).catch((err) => console.warn("webmcp: registration failed", err));
 }
 ```
 

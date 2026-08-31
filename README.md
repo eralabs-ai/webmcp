@@ -85,7 +85,8 @@ already run.
 - **Journeys, not endpoints.** Tools map to what a visitor asks and asks
   for. Most sites need 3 to 10 tools. A blog needs 1.
 - **Approval before implementation.** Tool selection is a product decision.
-  Nothing is written until you say yes.
+  No code is written until you say yes; `audit`'s only artifact is its
+  report file.
 - **Verified, not assumed.** Every tool is exercised in a browser the way
   an agent would call it.
 - **Safe by default.** Server-side authorization stays mandatory. Payments

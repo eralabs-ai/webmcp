@@ -4,13 +4,9 @@
 
 ```js
 export function getModelContext() {
-  if (typeof document !== "undefined" && document.modelContext) {
-    return document.modelContext;
-  }
-  if (typeof navigator !== "undefined" && navigator.modelContext) {
-    return navigator.modelContext; // legacy implementations only
-  }
-  return null;
+  return typeof document !== "undefined"
+    ? (document.modelContext ?? null)
+    : null;
 }
 
 export function canRegisterWebMCP() {
@@ -85,7 +81,8 @@ privileged tools to origins the site does not control.
 
 ## Do not
 
-- Rely on `navigator.modelContext` alone in new code
+- Read `navigator.modelContext` in new code; it is not in the spec
+  (deprecated Chrome ≤149 legacy surface — history in [spec.md](spec.md))
 - Call removed APIs: `unregisterTool()`, `provideContext()`, `clearContext()`
 - Register the same name twice without aborting the first registration
 - Ship the polyfill on pages that register nothing
