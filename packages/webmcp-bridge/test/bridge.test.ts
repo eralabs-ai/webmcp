@@ -101,14 +101,14 @@ describe("createWebMcpBridge", () => {
     await bridge.close();
   });
 
-  it("throws on MCP error results instead of returning them as success", async () => {
+  it("returns MCP error results as { error } instead of throwing", async () => {
     const { clientTransport } = await makeServer();
     const { mc, tools } = fakeModelContext();
     const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
 
-    await expect(tools.get("always_fails")!.execute({})).rejects.toThrow(
-      "upstream exploded",
-    );
+    await expect(tools.get("always_fails")!.execute({})).resolves.toEqual({
+      error: "upstream exploded",
+    });
     await bridge.close();
   });
 
@@ -192,9 +192,9 @@ describe("createWebMcpBridge", () => {
     const { mc, tools } = fakeModelContext();
     const bridge = await createWebMcpBridge({ transport: clientTransport, modelContext: mc });
 
-    await expect(tools.get("get_chart")!.execute({})).rejects.toThrow(
-      /non-text content \(image\)/,
-    );
+    await expect(tools.get("get_chart")!.execute({})).resolves.toEqual({
+      error: expect.stringMatching(/non-text content \(image\)/) as unknown,
+    });
     await bridge.close();
   });
 

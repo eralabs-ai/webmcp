@@ -138,9 +138,11 @@ Non-negotiables for imperative tools (full contract in
 3. Honor `execute`'s `{ signal }` in fetches and long work
 4. `annotations.readOnlyHint` must match reality;
    `untrustedContentHint: true` when returns carry user or third-party text
-5. Validate input inside `execute`; throw actionable errors; a read that
-   finds nothing returns an empty result plus an explicit note, never a bare
-   throw or silent success
+5. Validate input inside `execute`; fail by **returning**
+   `{ error: "actionable message" }`, never by throwing — the spec maps a
+   rejected `execute` to a bare `UnknownError` and discards the message.
+   A read that finds nothing returns an empty result plus an explicit note,
+   never a silent success. Rejection is for cancellation (`signal`) only
 6. Return values must survive `JSON.stringify`
 7. Names: ASCII `[a-zA-Z0-9_.-]`, 1-128 chars; one tool per approved journey;
    duplicate names reject at registration

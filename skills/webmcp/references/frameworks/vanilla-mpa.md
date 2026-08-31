@@ -43,31 +43,35 @@ const mc = document.modelContext ?? null;
 
 if (mc?.registerTool) {
   const controller = new AbortController();
-  mc.registerTool(
-    {
-      name: "search_site",
-      description:
-        "Search this site's pages and articles by keyword. Returns up to five matches with titles and URLs.",
-      inputSchema: {
-        type: "object",
-        properties: {
-          query: { type: "string", description: "Keywords to search for." },
+  try {
+    await mc.registerTool(
+      {
+        name: "search_site",
+        description:
+          "Search this site's pages and articles by keyword. Returns up to five matches with titles and URLs.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            query: { type: "string", description: "Keywords to search for." },
+          },
+          required: ["query"],
+          additionalProperties: false,
         },
-        required: ["query"],
-        additionalProperties: false,
+        annotations: { readOnlyHint: true, untrustedContentHint: true },
+        async execute({ query }, { signal }) {
+          const res = await fetch(`/search.json?q=${encodeURIComponent(query)}`, { signal });
+          if (!res.ok) return { error: `Search failed (${res.status}). Retry with different keywords.` };
+          const hits = await res.json();
+          return hits.length
+            ? { matches: hits.slice(0, 5) }
+            : { matches: [], note: "No pages matched this query." };
+        },
       },
-      annotations: { readOnlyHint: true, untrustedContentHint: true },
-      async execute({ query }, { signal }) {
-        const res = await fetch(`/search.json?q=${encodeURIComponent(query)}`, { signal });
-        if (!res.ok) throw new Error(`Search failed (${res.status}). Retry with different keywords.`);
-        const hits = await res.json();
-        return hits.length
-          ? { matches: hits.slice(0, 5) }
-          : { matches: [], note: "No pages matched this query." };
-      },
-    },
-    { signal: controller.signal },
-  ).catch((err) => console.warn("webmcp: registration failed", err));
+      { signal: controller.signal },
+    );
+  } catch (err) {
+    console.warn("webmcp: registration failed", err);
+  }
 }
 ```
 

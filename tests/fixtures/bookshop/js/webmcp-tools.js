@@ -1,7 +1,8 @@
 // Site-wide WebMCP tool, loaded by every page (MPA: registrations die on
 // navigation, so each page re-registers). Follows the plugin's own rules:
 // feature detection, awaited registration in try/catch, honest annotations,
-// empty results carry a note, JSON-serializable returns.
+// failures returned as { error } (a rejected execute reaches agents as a
+// bare UnknownError), empty results carry a note, JSON-serializable returns.
 const mc = document.modelContext ?? null;
 
 if (mc?.registerTool) {
@@ -21,9 +22,9 @@ if (mc?.registerTool) {
           additionalProperties: false,
         },
         annotations: { readOnlyHint: true, untrustedContentHint: false },
-        async execute({ query }, { signal } = {}) {
+        async execute({ query }, { signal }) {
           const res = await fetch("books.json", { signal });
-          if (!res.ok) throw new Error(`Catalog unavailable (${res.status}). Retry shortly.`);
+          if (!res.ok) return { error: `Catalog unavailable (${res.status}). Retry shortly.` };
           const books = await res.json();
           const q = String(query).toLowerCase();
           const matches = books

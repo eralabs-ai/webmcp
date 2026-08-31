@@ -27,9 +27,10 @@ This plugin's own package (MIT, maintained in this repository under
 browser (Streamable HTTP with SSE fallback), discovers tools (with
 pagination), and registers each on `document.modelContext` via
 `registerTool`, so page-local tools coexist with bridged ones. It maps
-MCP annotations onto WebMCP hints, throws on MCP error results so agents
-get actionable failures, follows `tools/list_changed` re-syncs, and
-no-ops with a warning in browsers without WebMCP.
+MCP annotations onto WebMCP hints, returns MCP error results as `{ error }`
+payloads so agents get actionable failures (a rejected `execute` would
+reach them as a bare `UnknownError`), follows `tools/list_changed`
+re-syncs, and no-ops with a warning in browsers without WebMCP.
 
 ```bash
 npm install @ora-ai/webmcp-bridge
