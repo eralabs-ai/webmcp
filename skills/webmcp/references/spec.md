@@ -1,6 +1,6 @@
 # WebMCP API contract (current spec snapshot)
 
-Snapshot: 2026-08-30
+Snapshot: 2026-08-31
 
 Snapshot of https://webmachinelearning.github.io/webmcp/ plus Chrome's
 preview surface. When this file and the live spec disagree, the live spec
@@ -129,6 +129,7 @@ synchronously, and the same `await` + `catch` handles both:
 | --- | --- |
 | `InvalidStateError` | duplicate name; empty `name`/`description`; name over 128 chars or outside `[a-zA-Z0-9_.-]` |
 | `NotAllowedError` | `"tools"` Permissions Policy denied (cross-origin iframe missing `allow="tools"`) |
+| `SecurityError` | `exposedTo` lists an untrusted origin (non-secure / not potentially trustworthy) |
 | `TypeError` / serialization errors | non-JSON-serializable or circular `inputSchema` |
 
 ## Chrome preview timeline (verify before promising)
