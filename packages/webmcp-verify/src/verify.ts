@@ -27,7 +27,7 @@ export interface LintFinding {
 const NO_MODELCONTEXT_HELP =
   "The page exposes no ModelContext: WebMCP is not active in this browser. " +
   "Enable chrome://flags/#enable-webmcp-testing (or launch Chrome with " +
-  "--enable-features=WebMCPTesting,DevToolsWebMCPSupport), or load " +
+  "--enable-features=WebMCPTesting), or load " +
   "@mcp-b/webmcp-polyfill on the page.";
 
 function asRecord(value: unknown): Record<string, unknown> {
