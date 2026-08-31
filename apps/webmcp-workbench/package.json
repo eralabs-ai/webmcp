@@ -9,6 +9,7 @@
     "prebuild": "npm --prefix ../../packages/webmcp-verify run build",
     "dev": "vite",
     "build": "vite build",
+    "e2e": "node scripts/e2e.mjs",
     "icons": "node scripts/make-icons.mjs",
     "typecheck": "tsc --noEmit"
   },
